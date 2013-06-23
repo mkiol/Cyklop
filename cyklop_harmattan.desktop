@@ -1,0 +1,12 @@
+[Desktop Entry]
+Encoding=UTF-8
+Version=1.0
+Type=Application
+Terminal=false
+Name=cyklon
+Exec=/usr/bin/invoker --type=d -s /opt/cyklop/bin/cyklop
+Icon=/usr/share/icons/hicolor/80x80/apps/cyklop80.png
+X-Window-Icon=
+X-HildonDesk-ShowInToolbar=true
+X-Osso-Type=application/x-executable
+Name[pl_PL]=cyklop_harmattan
