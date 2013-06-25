@@ -4,7 +4,7 @@ Priority: optional
 Maintainer: Michal Kosciesza <michal@mkiol.net>
 Build-Depends: debhelper (>= 5), libqt4-dev
 Standards-Version: 3.7.3
-Homepage: <insert the upstream URL, if relevant>
+Homepage: https://github.com/mkiol/Cyklop
 
 Package: cyklop
 Architecture: any
@@ -15,6 +15,15 @@ Description: A bicycle sharing application
  than 80 cities from Germany, Austria, Latvia, Poland, Switzerland, 
  Turkey, Azerbaijan, Cyprus, the United Arabian Emirates and 
  New Zealand.
+XB-Description-pl_PL: Aplikacja do obsługi systemu rowerów publicznych
+ Pozwala na znalezienie wolnych rowerów lub stacji. Obecnie działa we 
+ wszystkich systemach obsługiwanych przez firmę Nextbike, czyli w 
+ ponad 80 miastach z Niemiec, Austrii, Łotwy, Polski, Szwajcarii, 
+ Turcji, Azerbejdżanu, Cypru, Zjednoczonych Emiratów Arabskich i 
+ Nowej Zelandii. W przypadku Polski, aplikacja współpracuje z 
+ warszawskim systemem Veturilo, BemowoBike, Wrocławskim Rowerem 
+ Miejskim (WRM), OpoleBike oraz z Poznańskim Rowerem Miejskim (PRM).
+XSBC-Bugtracker: https://github.com/mkiol/Cyklop/issues
 XB-Maemo-Display-Name: Cyklop
 XB-Maemo-Icon-26: 
  iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAABHNCSVQICAgI

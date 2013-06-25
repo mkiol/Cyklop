@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by Qt Creator 2.4.1, 2013-06-23T18:18:54. -->
+<!-- Written by Qt Creator 2.4.1, 2013-06-26T00:47:48. -->
 <qtcreator>
  <data>
   <variable>ProjectExplorer.Project.ActiveTarget</variable>
-  <value type="int">2</value>
+  <value type="int">1</value>
  </data>
  <data>
   <variable>ProjectExplorer.Project.EditorSettings</variable>
@@ -244,8 +244,8 @@
     <value type="QString" key="Qt4ProjectManager.Qt4RunConfiguration.UserWorkingDirectory"></value>
     <value type="uint" key="RunConfiguration.QmlDebugServerPort">3768</value>
     <value type="bool" key="RunConfiguration.UseCppDebugger">true</value>
-    <value type="bool" key="RunConfiguration.UseQmlDebugger">false</value>
-    <value type="bool" key="RunConfiguration.UseQmlDebuggerAuto">true</value>
+    <value type="bool" key="RunConfiguration.UseQmlDebugger">true</value>
+    <value type="bool" key="RunConfiguration.UseQmlDebuggerAuto">false</value>
    </valuemap>
    <value type="int" key="ProjectExplorer.Target.RunConfigurationCount">1</value>
   </valuemap>
@@ -376,10 +376,18 @@
       <value type="QString" key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName">Zainstaluj pakiet Debian poprzez SFTP</value>
       <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName"></value>
       <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">MaemoUploadAndInstallDpkgPackageStep</value>
-      <valuelist type="QVariantList" key="Qt4ProjectManager.MaemoRunConfiguration.LastDeployedFiles"/>
-      <valuelist type="QVariantList" key="Qt4ProjectManager.MaemoRunConfiguration.LastDeployedHosts"/>
-      <valuelist type="QVariantList" key="Qt4ProjectManager.MaemoRunConfiguration.LastDeployedRemotePaths"/>
-      <valuelist type="QVariantList" key="Qt4ProjectManager.MaemoRunConfiguration.LastDeployedTimes"/>
+      <valuelist type="QVariantList" key="Qt4ProjectManager.MaemoRunConfiguration.LastDeployedFiles">
+       <value type="QString">/home/mkiol/dev/Qt/cyklop-build-harmattan-Harmattan_Target_-_QEmu_PR1_2__Qt_SDK__Release/cyklop_0.0.1-0_armel.deb</value>
+      </valuelist>
+      <valuelist type="QVariantList" key="Qt4ProjectManager.MaemoRunConfiguration.LastDeployedHosts">
+       <value type="QString">localhost</value>
+      </valuelist>
+      <valuelist type="QVariantList" key="Qt4ProjectManager.MaemoRunConfiguration.LastDeployedRemotePaths">
+       <value type="QString"></value>
+      </valuelist>
+      <valuelist type="QVariantList" key="Qt4ProjectManager.MaemoRunConfiguration.LastDeployedTimes">
+       <value type="QDateTime">2013-06-26T00:46:31</value>
+      </valuelist>
      </valuemap>
      <value type="int" key="ProjectExplorer.BuildStepList.StepsCount">3</value>
      <value type="QString" key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName">instalacji</value>
@@ -390,7 +398,7 @@
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName">Budowanie pakietu Debian i instalowanie na urządzeniu Harmattan</value>
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName"></value>
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">DeployToHarmattan</value>
-    <value type="qulonglong" key="Qt4ProjectManager.MaemoRunConfiguration.DeviceId">1</value>
+    <value type="qulonglong" key="Qt4ProjectManager.MaemoRunConfiguration.DeviceId">4</value>
    </valuemap>
    <value type="int" key="ProjectExplorer.Target.DeployConfigurationCount">1</value>
    <valuemap type="QVariantMap" key="ProjectExplorer.Target.RunConfiguration.0">
@@ -603,11 +611,15 @@
       <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">MaemoMountAndInstallDeployStep</value>
       <valuelist type="QVariantList" key="Qt4ProjectManager.MaemoRunConfiguration.LastDeployedFiles">
        <value type="QString">/home/mkiol/dev/Qt/cyklop-build-maemo-Qt_for_Fremantle_PR1_3_Devices__Qt_SDK__Release/cyklop_0_0_1_armel.deb</value>
+       <value type="QString">/home/mkiol/dev/Qt/cyklop-build-maemo-Qt_for_Fremantle_PR1_3_Devices__Qt_SDK__Debug/cyklop_0_0_1-0_armel.deb</value>
+       <value type="QString">/home/mkiol/dev/Qt/cyklop-build-maemo-Qt_for_Fremantle_PR1_3_Devices__Qt_SDK__Debug/cyklop_0_0_1-0_armel.deb</value>
        <value type="QString">/home/mkiol/dev/Qt/cyklop-build-maemo-Qt_for_Fremantle_PR1_3_Devices__Qt_SDK__Debug/cyklop_0_0_1_armel.deb</value>
        <value type="QString">/home/mkiol/dev/Qt/cyklop-build-maemo-Qt_for_Fremantle_PR1_3_Devices__Qt_SDK__Debug/cyklop_0_1_0_armel.deb</value>
        <value type="QString">/home/mkiol/dev/Qt/cyklop-build-maemo-Qt_for_Fremantle_PR1_3_Devices__Qt_SDK__Release/cyklop_0_0_1_armel.deb</value>
       </valuelist>
       <valuelist type="QVariantList" key="Qt4ProjectManager.MaemoRunConfiguration.LastDeployedHosts">
+       <value type="QString">192.168.2.101</value>
+       <value type="QString">192.168.2.100</value>
        <value type="QString">192.168.2.101</value>
        <value type="QString">192.168.2.101</value>
        <value type="QString">192.168.2.101</value>
@@ -618,9 +630,13 @@
        <value type="QString"></value>
        <value type="QString"></value>
        <value type="QString"></value>
+       <value type="QString"></value>
+       <value type="QString"></value>
       </valuelist>
       <valuelist type="QVariantList" key="Qt4ProjectManager.MaemoRunConfiguration.LastDeployedTimes">
        <value type="QDateTime">2013-05-12T20:57:01</value>
+       <value type="QDateTime">2013-06-24T01:18:16</value>
+       <value type="QDateTime">2013-06-26T00:18:22</value>
        <value type="QDateTime">2013-06-21T23:01:22</value>
        <value type="QDateTime">2013-06-22T16:36:32</value>
        <value type="QDateTime">2013-05-05T14:28:04</value>

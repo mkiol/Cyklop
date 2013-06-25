@@ -5,7 +5,7 @@
 .pragma library
 
 // General
-var VERSION = "0.1.0"; //version
+var VERSION = "0.0.1"; //version
 
 // UI
 var MARGIN = 20;
@@ -22,7 +22,4 @@ var RED = "#ddff2a2a";
 var FONT_FAMILY = "Arial";
 var FONT_SIZE = 24;
 
-// Positioning
-var UPDATE_INTERVAL = 5000;
-var RADIUS = 5000;
 

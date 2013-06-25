@@ -92,14 +92,21 @@ void Utils::saveLocale(const QString &locale) {
     _settings->setValue("locale",locale);
 }
 
-int Utils::timeout() {
-    int t = _settings->value("timeout",10000).toInt();
-    saveTimeout(t);
-    return t;
+bool Utils::gps()
+{
+    int gps = _settings->value("gps",true).toBool();
+    saveGps(gps);
+    return gps;
 }
 
-void Utils::saveTimeout(int t)
+void Utils::saveGps(bool enabled)
 {
-    _settings->setValue("timeout",t);
+    _settings->setValue("gps",enabled);
 }
+
+void Utils::setViewer(QmlApplicationViewer *viewer)
+{
+    _viewer = viewer;
+}
+
 

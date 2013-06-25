@@ -8,6 +8,7 @@
 #include "nextbikecitymodel.h"
 #include "utils.h"
 
+
 Q_DECL_EXPORT int main(int argc, char *argv[])
 {
     QScopedPointer<QApplication> app(createApplication(argc, argv));
@@ -21,15 +22,22 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
     // translator
     QTranslator translator;
     QString dir = "ts";
+
 #if defined(Q_WS_MAEMO_5)
     dir = "/opt/cyklop/ts";
-#endif
+#endif //Q_WS_MAEMO_5
+
+#if defined(MEEGO_EDITION_HARMATTAN)
+    dir = "/opt/cyklop/ts";
+#endif //MEEGO_EDITION_HARMATTAN
+
     if (translator.load(QString("cyklop.")+utils.locale(),dir)) {
         app->installTranslator(&translator);
     }
 
     // viewer
     QmlApplicationViewer viewer;
+    utils.setViewer(&viewer);
     viewer.setOrientation(QmlApplicationViewer::ScreenOrientationAuto);
     QObject::connect(viewer.engine(), SIGNAL(quit()), app.data(), SLOT(quit()));
     viewer.rootContext()->setContextProperty("viewer", &viewer);
@@ -39,7 +47,6 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
     NextbikePlaceModel nextbikeModel(&utils);
     QObject::connect(&nextbikeModel, SIGNAL(quit()), app.data(), SLOT(quit()));
     viewer.rootContext()->setContextProperty("nextbikeModel", &nextbikeModel);
-    //nextbikeModel.init();
     NextbikeCityModel cityModel;
     QObject::connect(&cityModel, SIGNAL(quit()), app.data(), SLOT(quit()));
     viewer.rootContext()->setContextProperty("cityModel", &cityModel);
@@ -52,9 +59,13 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
     viewer.setOrientation(QmlApplicationViewer::ScreenOrientationLockLandscape);
     viewer.setGeometry(QRect(0,0,800,480));
     //viewer.grabZoomKeys(true);
+    viewer.setMainQmlFile(QLatin1String("qml/cyklop/maemo/main.qml"));
 #endif //Q_WS_MAEMO_5
 
-    viewer.setMainQmlFile(QLatin1String("qml/cyklop/main.qml"));
+#if defined(MEEGO_EDITION_HARMATTAN)
+    viewer.setMainQmlFile(QLatin1String("qml/cyklop/meego/main.qml"));
+#endif //MEEGO_EDITION_HARMATTAN
+
     viewer.setWindowTitle(QString("Cyklop"));
     viewer.showExpanded();
 

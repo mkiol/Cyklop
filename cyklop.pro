@@ -52,7 +52,11 @@ SOURCES += main.cpp \
     utils.cpp
 
 # evil_hack_to_fool_lupdate
-include(ts.pri)
+#include(ts.pri)
+
+contains(MEEGO_EDITION, harmattan): {
+    DEFINES += MEEGO_EDITION_HARMATTAN
+}
 
 # Please do not modify the following two lines. Required for deployment.
 include(qmlapplicationviewer/qmlapplicationviewer.pri)

@@ -9,6 +9,8 @@
 #include <QDBusMessage>
 #endif
 
+#include "qmlapplicationviewer.h"
+
 
 class Utils : public QObject
 {
@@ -29,12 +31,14 @@ public:
     Q_INVOKABLE void saveInterval(int interval);
     Q_INVOKABLE QString locale();
     Q_INVOKABLE void saveLocale(const QString &name);
-    Q_INVOKABLE int timeout();
-    Q_INVOKABLE void saveTimeout(int t);
+    Q_INVOKABLE bool gps();
+    Q_INVOKABLE void saveGps(bool enabled);
 
+    void setViewer(QmlApplicationViewer* viewer);
 
 private:
     QSettings* _settings;
+    QmlApplicationViewer* _viewer;
     
 };
 

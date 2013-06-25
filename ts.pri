@@ -1,26 +1,24 @@
 evil_hack_to_fool_lupdate {
         SOURCES += \
-            qml/cyklop/AboutPage.qml \
-            qml/cyklop/Baner1.qml \
-            qml/cyklop/Baner2.qml \
-            qml/cyklop/BarButton.qml \
-            qml/cyklop/BottomBar.qml \
-            qml/cyklop/BusyPane.qml \
-            qml/cyklop/FirstRunPage.qml \
-            qml/cyklop/Line.qml \
-            qml/cyklop/ListDelegate.qml \
-            qml/cyklop/main.qml \
-            qml/cyklop/MapButton.qml \
-            qml/cyklop/NewMap.qml \
-            qml/cyklop/Notification.qml \
-            qml/cyklop/PlacePage.qml \
-            qml/cyklop/SettingsPage.qml \
-            qml/cyklop/SingleMap.qml \
-            qml/cyklop/SplashPane.qml \
-            qml/cyklop/StationsList.qml \
-            qml/cyklop/StationsMap.qml \
-            qml/cyklop/StationsPage.qml \
-            qml/cyklop/SwitchButton.qml \
-            qml/cyklop/TopBar.qml \
-            scripts.js
+            qml/cyklop/maemo/AboutPage.qml \
+            qml/cyklop/maemo/Baner1.qml \
+            qml/cyklop/maemo/Baner2.qml \
+            qml/cyklop/maemo/BarButton.qml \
+            qml/cyklop/maemo/BottomBar.qml \
+            qml/cyklop/maemo/BusyPane.qml \
+            qml/cyklop/maemo/FirstRunPage.qml \
+            qml/cyklop/maemo/Line.qml \
+            qml/cyklop/maemo/ListDelegate.qml \
+            qml/cyklop/maemo/main.qml \
+            qml/cyklop/maemo/MapButton.qml \
+            qml/cyklop/maemo/Notification.qml \
+            qml/cyklop/maemo/PlacePage.qml \
+            qml/cyklop/maemo/SettingsPage.qml \
+            qml/cyklop/maemo/SingleMap.qml \
+            qml/cyklop/maemo/SplashPane.qml \
+            qml/cyklop/maemo/StationsList.qml \
+            qml/cyklop/maemo/StationsMap.qml \
+            qml/cyklop/maemo/StationsPage.qml \
+            qml/cyklop/maemo/SwitchButton.qml \
+            qml/cyklop/maemo/TopBar.qml
 }

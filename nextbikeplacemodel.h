@@ -16,14 +16,14 @@
 #include <QModelIndex>
 #include <QFile>
 #include <QDir>
-//#include <QtLocation/QGeoCoordinate>
 
-// Use the QtMobility namespace
-//QTM_USE_NAMESPACE
-
+#include <QGeoCoordinate>
 
 #include "listmodel.h"
 #include "utils.h"
+
+// Use the QtMobility namespace
+QTM_USE_NAMESPACE
 
 
 class NextbikePlaceItem : public ListItem
@@ -49,11 +49,11 @@ public:
     QVariant data(int role) const;
     QHash<int, QByteArray> roleNames() const;
     inline QString id() const { return m_name; }
-    inline QString name() const { return m_name; }
+    Q_INVOKABLE inline QString name() const { return m_name; }
     inline int uid() const { return m_uid; }
-    inline double lat() const { return m_lat; }
-    inline double lng() const { return m_lng; }
-    inline int bikes() const { return m_bikes; }
+    Q_INVOKABLE inline double lat() const { return m_lat; }
+    Q_INVOKABLE inline double lng() const { return m_lng; }
+    Q_INVOKABLE inline int bikes() const { return m_bikes; }
     inline QString bikesNumber() const { return m_bikesNumber; }
     inline int distance() const { return m_distance; }
     void setDistance(int distance);
@@ -74,18 +74,20 @@ class NextbikePlaceModel : public ListModel
     Q_OBJECT
 public:
     explicit NextbikePlaceModel(Utils *utils, QObject *parent = 0);
-    Q_INVOKABLE QString exportFilePath();
-    Q_INVOKABLE QString dBFilePath();
     Q_INVOKABLE void init();
-    Q_INVOKABLE void reload();
     Q_INVOKABLE void sort(double lat, double lng);
+    Q_INVOKABLE void sortS();
     Q_INVOKABLE QString cityName();
+    Q_INVOKABLE double lat();
+    Q_INVOKABLE double lng();
+    Q_INVOKABLE int count();
+    Q_INVOKABLE QObject* get(int i);
 
 signals:
     void quit();
     void busy();
-    //void readyToSelect();
     void ready();
+    void sorted();
 
 public slots:
     void finished(QNetworkReply *reply);
@@ -97,19 +99,15 @@ private:
     QNetworkReply *currentReply;
     QByteArray XMLdata;
     QDomElement domElement;
-    QString _dbFile;
-    QString _landmarkFile;
     QString _cityName;
     bool _busy;
     Utils* _utils;
+    double _lat;
+    double _lng;
 
     bool parse();
-    void createPlaces();
-    bool generateLmxFile();
-    bool generateDbFile();
-    bool checkDbFile();
-    QString nameFixup(NextbikePlaceItem *place);
-    QString randomString();   
+    void createPlaces(); 
+    void doSorting();
 };
 
 #endif // NEXTBIKEPLACEMODEL_H

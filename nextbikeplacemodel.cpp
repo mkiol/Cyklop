@@ -35,20 +35,6 @@ void NextbikePlaceModel::init()
     connect(currentReply, SIGNAL(error(QNetworkReply::NetworkError)), this, SLOT(error(QNetworkReply::NetworkError)));
 }
 
-void NextbikePlaceModel::reload()
-{
-    if(_busy) return;
-
-    int l = rowCount();
-    removeRows(0,l);
-    XMLdata = QByteArray();
-    //qDebug() << "reload";
-    //qDebug() << "checkDbFile: " << checkDbFile();
-    //generateDbFile();
-    init();
-}
-
-
 void NextbikePlaceModel::readyRead()
 {
     int statusCode = currentReply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
@@ -75,11 +61,12 @@ void NextbikePlaceModel::createPlaces()
     for(int i=0;i<l;++i) {
         QDomElement city = cityList.at(i).toElement();
         if(city.attribute("uid").toInt() == uid) {
+            _lat = city.attribute("lat").toDouble();
+            _lng = city.attribute("lng").toDouble();
             QDomNodeList placeList = city.elementsByTagName("place");
             int ll = placeList.length();
             for(int ii=0;ii<ll;++ii) {
                 QDomElement place = placeList.at(ii).toElement();
-                //qDebug() << "uid: " << place.attribute("uid").toInt() << " name: " << place.attribute("name");
                 appendRow(new NextbikePlaceItem(
                               place.attribute("name"),
                               place.attribute("uid").toInt(),
@@ -93,24 +80,17 @@ void NextbikePlaceModel::createPlaces()
         }
     }
 
-    generateDbFile();
-    generateLmxFile();
-
     _busy = false;
     emit ready();
 }
 
 void NextbikePlaceModel::finished(QNetworkReply *reply)
 {
-    qDebug() << "finished";
-
     if(!parse()) {
         qWarning("error parsing XML feed");
         emit quit();
         return;
     }
-
-    //emit readyToSelect();
     createPlaces();
 }
 
@@ -122,131 +102,72 @@ void NextbikePlaceModel::error(QNetworkReply::NetworkError)
     currentReply = 0;
 }
 
-QString NextbikePlaceModel::nameFixup(NextbikePlaceItem *place)
-{
-   return QString::number(place->bikes()) + "@#@" + place->bikesNumber();
-}
-
-bool NextbikePlaceModel::generateLmxFile()
-{
-    //clean
-    QDir dir(QDir::temp().absolutePath());
-    dir.setNameFilters(QStringList() << "nextbikefeed_*.lmx");
-    dir.setFilter(QDir::Files);
-    for(int i=0; i<dir.entryList().size();++i) {
-        qDebug() << dir.entryList().at(i);
-        dir.remove(dir.entryList().at(i));
-    }
-
-    _landmarkFile = QDir::toNativeSeparators(QDir::temp().absolutePath()+"/nextbikefeed_"+randomString()+".lmx");
-    //qDebug() << "file: " << _landmarkFile;
-    QFile file(_landmarkFile);
-
-    if(file.exists()) {
-        file.remove();
-    }
-
-    if (!file.open(QFile::WriteOnly|QFile::Truncate))
-        return false;
-
-    QTextStream out(&file);
-
-    out << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
-    out << "<lm:lmx xmlns:lm=\"http://www.nokia.com/schemas/location/landmarks/1/0\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.nokia.com/schemas/location/landmarks/1/0/lmx.xsd\">\n";
-    out << "<lm:landmarkCollection>\n";
-
-    int l = rowCount();
-    for(int i=0;i<l;++i) {
-        NextbikePlaceItem* place = (NextbikePlaceItem*) readRow(i);
-        out << "<lm:landmark>\n";
-        out << "  <lm:name>" << place->name() << "</lm:name>\n";
-        out << "  <lm:description>" << nameFixup(place) << "</lm:description>\n";
-        out << "  <lm:coordinates>\n";
-        out << "      <lm:latitude>" << place->lat() << "</lm:latitude>\n";
-        out << "      <lm:longitude>" << place->lng() << "</lm:longitude>\n";
-        out << "  </lm:coordinates>\n";
-        out << "</lm:landmark>\n";
-    }
-
-    out << "</lm:landmarkCollection>";
-
-    file.close();
-
-    return true;
-}
-
-QString NextbikePlaceModel::exportFilePath()
-{
-    //qDebug() << "file: " << _landmarkFile;
-    return _landmarkFile;
-}
-
-bool NextbikePlaceModel::generateDbFile()
-{
-    //clean
-    QDir dir(QDir::temp().absolutePath());
-    dir.setNameFilters(QStringList() << "cyklop_*.db");
-    dir.setFilter(QDir::Files);
-    for(int i=0; i<dir.entryList().size();++i) {
-        qDebug() << dir.entryList().at(i);
-        dir.remove(dir.entryList().at(i));
-    }
-
-    _dbFile = QDir::toNativeSeparators(QDir::temp().absolutePath()+"/cyklop_"+randomString()+".db");
-    //qDebug() << "file: " << _dbFile;
-    QFile file(_dbFile);
-
-    if(file.exists()) {
-        file.remove();
-    }
-
-    return true;
-}
-
-bool NextbikePlaceModel::checkDbFile()
-{
-    QFile file(_dbFile);
-
-    if(file.exists()) {
-        return true;
-    }
-    return false;
-}
-
-QString NextbikePlaceModel::dBFilePath()
-{
-    //qDebug() << "file: " << _dbFile;
-    return _dbFile;
-}
-
-QString NextbikePlaceModel::randomString()
-{
-    return QString::number(qrand() % 10000);
-}
-
 QString NextbikePlaceModel::cityName()
 {
     return _cityName;
 }
 
+double NextbikePlaceModel::lat()
+{
+    return _lat;
+}
+
+double NextbikePlaceModel::lng()
+{
+    return _lng;
+}
+
+void NextbikePlaceModel::sortS()
+{
+    //qDebug() << "sortS()";
+    this->sort(_lat,_lng);
+}
+
 void NextbikePlaceModel::sort(double lat, double lng)
 {
-    /*QGeoCoordinate curCoord = QGeoCoordinate(lat, lng);
-    QList<int> torem = QList<int>();
+    // set distance
+    //qDebug() << "lat: " << lat << " lng: " << lng;
+    QGeoCoordinate curCoord = QGeoCoordinate(lat, lng);
+    int radius = _utils->radius();
     int l = this->rowCount();
     for(int i=0; i<l; ++i) {
         NextbikePlaceItem* item = (NextbikePlaceItem*) this->readRow(i);
         QGeoCoordinate coord = QGeoCoordinate(item->lat(), item->lng());
-        int distance = (int) curCoord.distanceTo(coord);
-        if(distance>5000)
-            torem.append(i);
-        else
-            item->setDistance(distance);
+        item->setDistance((int) curCoord.distanceTo(coord));
+        //qDebug() << item->name() << " distance: " << item->distance();
+        if(item->distance()>radius) {
+            this->removeRow(i);
+            --i; --l;
+        }
     }
-    QList<int>::iterator it;
-    for (it = torem.begin(); it != torem.end(); ++it)
-        this->removeRow(*it);
-    */
+
+    // sort
+    this->doSorting();
+    emit sorted();
+}
+
+void NextbikePlaceModel::doSorting()
+{
+    int n, i;
+    for (n = 0; n < this->rowCount(); ++n) {
+        for (i=n+1; i < this->rowCount(); ++i) {
+            if(((NextbikePlaceItem*)this->readRow(n))->distance() >
+               ((NextbikePlaceItem*)this->readRow(i))->distance()) {
+                this->moveRow(i, n);
+                n = 0;
+            }
+        }
+    }
+}
+
+int NextbikePlaceModel::count()
+{
+    return this->rowCount();
+}
+
+QObject* NextbikePlaceModel::get(int i)
+{
+    return (QObject*) this->readRow(i);
 }
 
 // ----------------------------------------------------------------
