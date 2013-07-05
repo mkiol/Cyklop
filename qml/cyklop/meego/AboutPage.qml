@@ -50,7 +50,7 @@ Page {
             anchors.horizontalCenter: parent.horizontalCenter
 
             Label {
-                text: "Cyklop"
+                text: "cyklop"
                 anchors.horizontalCenter: parent.horizontalCenter
                 color: Config.FGCOLOR_BANER
                 font.pixelSize: 32
@@ -78,7 +78,7 @@ Page {
                 width: parent.width
             }
             Label {
-                text: "https://github.com/mkiol/Cyklop"
+                text: "http://cyklop.mkiol.net/"
                 color: Config.FGCOLOR_BANER
                 anchors.horizontalCenter: parent.horizontalCenter
             }

@@ -2,9 +2,9 @@ Source: cyklop
 Section: user/navigation
 Priority: optional
 Maintainer: Michal Kosciesza <michal@mkiol.net>
-Build-Depends: debhelper (>= 5), libqt4-dev
+Build-Depends: debhelper (>= 5), libqt4-dev, libqtm-12-dev
 Standards-Version: 3.7.3
-Homepage: https://github.com/mkiol/Cyklop
+Homepage: http://cyklop.mkiol.net/
 
 Package: cyklop
 Architecture: any

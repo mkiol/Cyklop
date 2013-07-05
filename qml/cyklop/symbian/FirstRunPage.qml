@@ -1,6 +1,7 @@
 import QtQuick 1.1
 
-import com.nokia.meego 1.0
+import com.nokia.symbian 1.1
+import com.nokia.extras 1.1
 
 import "../config.js" as Config
 import "../globals.js" as Globals
@@ -14,17 +15,9 @@ Page {
     ToolBarLayout {
         id: bottomBar
 
-        /*ToolIcon {
-            id: refreshButton
-            iconId: "toolbar-refresh"
-            onClicked: {
-                nextbikeModel.reload();
-            }
-        }*/
-
-        ToolIcon {
+        ToolButton {
             id: menuButton
-            iconId: "toolbar-view-menu"
+            iconSource: "toolbar-view-menu"
             anchors.right: parent.right
             onClicked: (myMenu.status == DialogStatus.Closed) ? myMenu.open() : myMenu.close()
         }
@@ -38,36 +31,27 @@ Page {
     ListView {
         id: listView
 
-        anchors.margins: Config.MARGIN
+        //anchors.margins: Config.MARGIN
         anchors.left: root.left; anchors.right: root.right
         anchors.top: root.top; anchors.bottom: root.bottom
 
         model: cityModel
-        spacing: 10
+        spacing: 0
         visible: true
 
-        header: Item {
-            height: 80
-            width: parent.width
+        delegate: ListItem {
+            id: listItem
+            subItemIndicator: true
+            anchors.margins: Config.MARGIN
 
-            Label {
-                font.family: Config.FGCOLOR
-                font.weight: Font.Bold
-                font.pixelSize: 26
-                text: qsTr("Select your city")
+            ListItemText {
                 anchors.verticalCenter: parent.verticalCenter
-                anchors.horizontalCenter: parent.horizontalCenter
-            }
-        }
-
-        delegate: ListDelegate {
-            titleText: name
-            titleWidth: parent.width-arrow.width
-            Image {
-                id: arrow
-                source: "image://theme/icon-m-common-drilldown-arrow" + (theme.inverted ? "-inverse" : "")
-                anchors.right: parent.right;
-                anchors.verticalCenter: parent.verticalCenter
+                anchors.left: parent.left
+                anchors.leftMargin: 10
+                id: listTitle
+                mode: listItem.mode
+                role: "Title"
+                text: name
             }
 
             onClicked: {
@@ -78,17 +62,14 @@ Page {
                 Globals.pageStack.replace(Globals.stationsPage);
             }
         }
-        //Component.onCompleted: positionViewAtIndex(0,ListView.Beginning)
     }
 
     ScrollDecorator {
         flickableItem: listView
     }
 
-    Notification {
+    InfoBanner {
         id: info
-        anchors.bottom: root.bottom
-        anchors.margins: Config.MARGIN
         text: qsTr("Select your city");
     }
 
@@ -98,16 +79,6 @@ Page {
         text: qsTr("Updating data...");
     }
 
-    /*Line {
-        anchors.top: topBar.bottom
-        shadow: false
-        white: true
-    }
-
-    TopBar {
-        id: topBar
-    }*/
-
     Connections {
         target: cityModel
         onBusy: {
@@ -116,7 +87,7 @@ Page {
         onReady: {
             listView.positionViewAtIndex(0,ListView.Beginning);
             busy.state = "hidden";
-            info.show();
+            info.open();
         }
     }
 

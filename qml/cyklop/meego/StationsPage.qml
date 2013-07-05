@@ -85,11 +85,16 @@ Page {
         visible: false
     }
 
-    Label {
-        id: error
-        anchors.centerIn: root
-        visible: false
-        text: qsTr("Can't find stations :-(");
+    Notification {
+        id: errorInfo
+        anchors.verticalCenter: root.verticalCenter
+        text: qsTr("Can't find stations :-(")
+    }
+
+    BusyPane {
+        id: busy
+        text: qsTr("Updating data...")
+        anchors.top: root.top; anchors.bottom: root.bottom;
     }
 
     Notification {
@@ -97,12 +102,6 @@ Page {
         anchors.bottom: root.bottom
         anchors.margins: Config.MARGIN
         text: qsTr("GPS is disabled!")
-    }
-
-    BusyPane {
-        id: busy
-        text: qsTr("Updating data...")
-        anchors.top: root.top; anchors.bottom: root.bottom;
     }
 
     /*Line {
@@ -144,18 +143,20 @@ Page {
     Connections {
         target: nextbikeModel
         onBusy: {
-            error.visible = false;
             busy.text = qsTr("Updating data...");
             busy.state = "visible";
         }
         onReady: {
-            error.visible = false;
+            if(positionSource.active) {
+                gpsInfo.text = qsTr("Waiting for GPS...");
+                gpsInfo.show();
+            }
             busy.text = qsTr("Finding nearest stations...");
         }
         onSorted: {
             busy.state = "hidden";
             if(nextbikeModel.count()==0) {
-                error.visible = true;
+                errorInfo.show();
             }
             if(!positionSource.active || !Utils.gps()) {
                 gpsInfo.show();

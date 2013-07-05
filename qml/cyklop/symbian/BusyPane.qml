@@ -1,6 +1,6 @@
-import QtQuick 1.0
+import QtQuick 1.1
 
-import org.maemo.fremantle 1.0
+import com.nokia.symbian 1.1
 
 import "../config.js" as Config
 
@@ -33,25 +33,50 @@ Item {
         }
     }
 
-    Rectangle {
+    /*Rectangle {
         id: box
         anchors.fill: parent
-        color: Config.BGCOLOR
-        opacity: 0.6
+        color: "white"
+        opacity: 0.2
+    }*/
+
+    Rectangle {
+        id: box
+        anchors.bottom: root.bottom; anchors.left: root.left; anchors.right: root.right
+        height: 60
+        color: "#222222"
+        opacity: 0.9
+    }
+
+    Row {
+        id: row
+        anchors.left: box.left; anchors.verticalCenter: box.verticalCenter
+        anchors.margins: 10
+        spacing: Config.MARGIN/2
+
+        BusyIndicator {
+            running: root.running
+            anchors.verticalCenter: row.verticalCenter
+            width: 25; height: 25
+        }
+
+        Label {
+            text: root.text
+            opacity: 0.8
+            anchors.verticalCenter: row.verticalCenter
+        }
     }
 
     MouseArea {
-        anchors.fill: box
+        anchors.fill: root
         enabled: root.state=="visible" ? true : false
     }
 
-    Rectangle {
+    /*Rectangle {
         id: label
         width: row.width + 2*Config.MARGIN
-        //anchors.bottom: root.bottom
         anchors.centerIn: root
         anchors.margins: Config.MARGIN
-        //anchors.horizontalCenter: root.horizontalCenter
         height: row.height + 2*Config.MARGIN
         border.color: "#aaaaaa"
         border.width: 1
@@ -66,17 +91,18 @@ Item {
 
         BusyIndicator {
             running: root.running
-            platformStyle: BusyIndicatorStyle { size: "small" }
             anchors.verticalCenter: row.verticalCenter
+            width: 25; height: 25
         }
 
         Label {
             text: root.text
-            //font.pixelSize: Config.FONT_SIZE
-            //font.family: Config.FONT_FAMILY
+            platformInverted: true
             opacity: 0.8
             anchors.verticalCenter: row.verticalCenter
         }
-    }
+    }*/
+
+
 
 }

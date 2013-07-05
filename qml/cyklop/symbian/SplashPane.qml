@@ -1,6 +1,6 @@
 import QtQuick 1.1
 
-import com.nokia.meego 1.0
+import com.nokia.symbian 1.1
 
 import "../config.js" as Config
 
@@ -16,18 +16,6 @@ Item {
         anchors.fill: parent
         color: Config.BGCOLOR_BANER
     }
-
-    /*Image {
-        id: quitButton
-        source: "../icons/maemoCloseIcon.png"
-        anchors.right: root.right
-        anchors.top: root.top
-
-        MouseArea {
-            anchors.fill: parent
-            onClicked: Qt.quit()
-        }
-    }*/
 
     Connections {
         target: nextbikeModel
@@ -70,10 +58,8 @@ Item {
         BusyIndicator {
             running: root.running
             anchors.verticalCenter: row.verticalCenter
-            platformStyle: BusyIndicatorStyle {
-                size: "small"
-                spinnerFrames: "image://theme/spinnerinverted"
-            }
+            width: 25
+            height: 25
         }
 
         Label {
@@ -94,7 +80,6 @@ Item {
         State {
             name: "hidden"
             PropertyChanges { target: root; y: -root.height }
-            //PropertyChanges { target: root; visible: false }
             PropertyChanges { target: root; running: false }
         }
     ]

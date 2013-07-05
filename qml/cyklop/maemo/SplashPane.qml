@@ -34,7 +34,11 @@ Item {
         onReady: {
             root.state = "hidden";
         }
+        onSorted: {
+            root.state = "hidden";
+        }
     }
+
 
     Connections {
         target: cityModel

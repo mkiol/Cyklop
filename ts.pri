@@ -20,5 +20,26 @@ evil_hack_to_fool_lupdate {
             qml/cyklop/maemo/StationsMap.qml \
             qml/cyklop/maemo/StationsPage.qml \
             qml/cyklop/maemo/SwitchButton.qml \
-            qml/cyklop/maemo/TopBar.qml
+            qml/cyklop/maemo/TopBar.qml \
+            qml/cyklop/meego/AboutPage.qml \
+            qml/cyklop/meego/Baner1.qml \
+            qml/cyklop/meego/Baner2.qml \
+            qml/cyklop/meego/BarButton.qml \
+            qml/cyklop/meego/BottomBar.qml \
+            qml/cyklop/meego/BusyPane.qml \
+            qml/cyklop/meego/FirstRunPage.qml \
+            qml/cyklop/meego/Line.qml \
+            qml/cyklop/meego/ListDelegate.qml \
+            qml/cyklop/meego/main.qml \
+            qml/cyklop/meego/MapButton.qml \
+            qml/cyklop/meego/Notification.qml \
+            qml/cyklop/meego/PlacePage.qml \
+            qml/cyklop/meego/SettingsPage.qml \
+            qml/cyklop/meego/SingleMap.qml \
+            qml/cyklop/meego/SplashPane.qml \
+            qml/cyklop/meego/StationsList.qml \
+            qml/cyklop/meego/StationsMap.qml \
+            qml/cyklop/meego/StationsPage.qml \
+            qml/cyklop/meego/SwitchButton.qml \
+            qml/cyklop/meego/TopBar.qml
 }

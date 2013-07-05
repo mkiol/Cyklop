@@ -75,7 +75,7 @@ class NextbikePlaceModel : public ListModel
 public:
     explicit NextbikePlaceModel(Utils *utils, QObject *parent = 0);
     Q_INVOKABLE void init();
-    Q_INVOKABLE void sort(double lat, double lng);
+    Q_INVOKABLE void sort(double lat, double lng, bool delEnabled = true);
     Q_INVOKABLE void sortS();
     Q_INVOKABLE QString cityName();
     Q_INVOKABLE double lat();

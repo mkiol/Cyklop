@@ -27,7 +27,7 @@
     </message>
     <message>
         <source>Updating data...</source>
-        <translation>Aktualizacja...</translation>
+        <translation>Aktualizuję dane...</translation>
     </message>
 </context>
 <context>
@@ -130,11 +130,15 @@
     </message>
     <message>
         <source>Finding nearest stations...</source>
-        <translation>Znajdywanie najbliższych stacji...</translation>
+        <translation>Szukam najbliższych stacji...</translation>
     </message>
     <message>
         <source>GPS is disabled!</source>
         <translation>GPS jest wyłączony!</translation>
+    </message>
+    <message>
+        <source>Waiting for GPS...</source>
+        <translation>Czekam na sygnał GPS...</translation>
     </message>
 </context>
 <context>

@@ -7,7 +7,7 @@ import "../config.js" as Config
 Item {
     id: root
 
-    property string text: qsTr("updating...")
+    property string text: qsTr("Updating...")
     property bool running: false
 
     anchors.right: parent.right; anchors.left: parent.left

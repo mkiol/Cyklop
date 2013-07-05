@@ -1,6 +1,6 @@
-import QtQuick 1.0
+import QtQuick 1.1
 
-import org.maemo.fremantle 1.0
+import com.nokia.symbian 1.1
 import QtMobility.location 1.2
 
 import "../config.js" as Config
@@ -10,10 +10,7 @@ import "../scripts.js" as Scripts
 PageStackWindow {
     id: appWindow
 
-    platformStyle: defaultStyle
-    showStatusBar: false
-    allowClose: false
-    allowSwitch: false
+    showStatusBar: true
     showToolBar: true
 
     StationsPage {
@@ -21,8 +18,7 @@ PageStackWindow {
     }
 
     Component.onCompleted: {
-        //theme.inverted = true;
-
+        //console.log("width: "+width + ", height: "+height);
         // setup globals
         Globals.pageStack = pageStack;
         Globals.stationsPage = stationPage;
@@ -34,10 +30,6 @@ PageStackWindow {
             pageStack.push(stationPage);
             nextbikeModel.init();
         }
-    }
-
-    PageStackWindowStyle {
-        id: defaultStyle
     }
 
     property variant position: positionSource.position.coordinate
@@ -59,6 +51,7 @@ PageStackWindow {
             }
         }
     }
+
 
     function sort() {
         if(!Utils.gps() || !positionSource.active) {
@@ -95,7 +88,6 @@ PageStackWindow {
 
     Menu {
         id: myMenu
-        visualParent: pageStack
         MenuLayout {
             MenuItem {
                 id: item1
@@ -125,6 +117,7 @@ PageStackWindow {
                     Qt.quit();
                 }
             }
+
         }
     }
 

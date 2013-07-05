@@ -9,9 +9,9 @@ DEPLOYMENTFOLDERS += folder_02
 
 # Additional import path used to resolve QML modules in Creator's code model
 #QML_IMPORT_PATH += /usr/lib/qt4/imports
-QML_IMPORT_PATH += /home/mkiol/dev/QtSDK/Maemo/4.6.2/sysroots/fremantle-arm-sysroot-20.2010.36-2-slim/opt/lib/qt4/imports
+#QML_IMPORT_PATH += /home/mkiol/dev/QtSDK/Maemo/4.6.2/sysroots/fremantle-arm-sysroot-20.2010.36-2-slim/opt/lib/qt4/imports
 #QML_IMPORT_PATH += /home/mkiol/dev/QtSDK/Maemo/4.6.2/sysroots/fremantle-arm-sysroot-20.2010.36-2-slim/usr/lib/qt4/imports
-
+#QML_IMPORT_PATH += /home/mkiol/dev/QtSDK/Desktop/Qt/474/gcc/imports/
 symbian:TARGET.UID3 = 0xE40FD623
 
 # Smart Installer package's UID
@@ -52,7 +52,7 @@ SOURCES += main.cpp \
     utils.cpp
 
 # evil_hack_to_fool_lupdate
-#include(ts.pri)
+include(ts.pri)
 
 contains(MEEGO_EDITION, harmattan): {
     DEFINES += MEEGO_EDITION_HARMATTAN

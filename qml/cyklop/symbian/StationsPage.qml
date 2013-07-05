@@ -1,6 +1,7 @@
-import QtQuick 1.0
+import QtQuick 1.1
 
-import org.maemo.fremantle 1.0
+import com.nokia.symbian 1.1
+import com.nokia.extras 1.1
 
 import "../config.js" as Config
 
@@ -13,43 +14,58 @@ Page {
     ToolBarLayout {
         id: bottomBar
 
-        ToolIcon {
+        ToolButton {
+            id: backButton
+            anchors.left: parent.left
+            //iconSource: pageStack.depth > 1 ? "toolbar-back" : "toolbar-close"
+            iconSource: "toolbar-back"
+            onClicked: {
+                if(pageStack.depth>1) {
+                    myMenu.close();
+                    pageStack.pop();
+                } else {
+                    Qt.quit()
+                }
+            }
+        }
+
+        ToolButton {
             id: refreshButton
-            iconId: "toolbar-refresh"
+            anchors.left: backButton.right
+            iconSource: "toolbar-refresh"
             onClicked: {
                 nextbikeModel.init();
             }
         }
 
-        Row {
-            spacing: 0
-            anchors.centerIn: parent
-
-            SwitchButton {
+        TabBar {
+            anchors.left: refreshButton.right
+            anchors.right: menuButton.left
+            TabButton {
                 id: listButton
-                height: bottomBar.height
                 text: qsTr("List")
-                selected: true
+                checked: true
                 onClicked: {
-                    mapButton.selected = false;
+                    mapButton.checked = false;
+                    checked = true;
                     showList();
                 }
             }
 
-            SwitchButton {
+            TabButton {
                 id: mapButton
-                height: bottomBar.height
                 text: qsTr("Map")
                 onClicked: {
-                    listButton.selected = false;
+                    listButton.checked = false;
+                    checked = true;
                     showMap();
                 }
             }
         }
 
-        ToolIcon {
+        ToolButton {
             id: menuButton
-            iconId: "toolbar-view-menu"
+            iconSource: "toolbar-view-menu"
             onClicked: (myMenu.status == DialogStatus.Closed) ? myMenu.open() : myMenu.close()
         }
 
@@ -61,45 +77,32 @@ Page {
 
     StationsList {
         id: stationsList
-        anchors.top: topBar.bottom; anchors.bottom: root.bottom
+        anchors.top: root.top; anchors.bottom: root.bottom
         anchors.right: root.right; anchors.left: parent.left
         visible: true
     }
 
     StationsMap {
         id: stationsMap
-        anchors.top: topBar.bottom; anchors.bottom: root.bottom
+        anchors.top: root.top; anchors.bottom: root.bottom
         anchors.right: root.right; anchors.left: parent.left
         visible: false
-    }
-
-    Notification {
-        id: errorInfo
-        anchors.verticalCenter: root.verticalCenter
-        text: qsTr("Can't find stations :-(")
     }
 
     BusyPane {
         id: busy
         text: qsTr("Updating data...")
-        anchors.top: topBar.bottom; anchors.bottom: root.bottom;
+        anchors.top: root.top; anchors.bottom: root.bottom;
     }
 
-    Notification {
+    InfoBanner {
+        id: errorInfo
+        text: qsTr("Can't find stations :-(")
+    }
+
+    InfoBanner {
         id: gpsInfo
-        anchors.bottom: root.bottom
-        anchors.margins: Config.MARGIN
         text: qsTr("GPS is disabled!")
-    }
-
-    Line {
-        anchors.top: topBar.bottom
-        shadow: false
-        white: true
-    }
-
-    TopBar {
-        id: topBar
     }
 
     function showList() {
@@ -122,18 +125,17 @@ Page {
         onReady: {
             if(positionSource.active) {
                 gpsInfo.text = qsTr("Waiting for GPS...");
-                gpsInfo.show();
+                gpsInfo.open();
             }
             busy.text = qsTr("Finding nearest stations...");
         }
         onSorted: {
             busy.state = "hidden";
             if(nextbikeModel.count()==0) {
-                errorInfo.show();
+                errorInfo.open();
             }
             if(!positionSource.active || !Utils.gps()) {
-                gpsInfo.text = qsTr("GPS is disabled!");
-                gpsInfo.show();
+                gpsInfo.open();
             }
             stationsMap.init();
         }

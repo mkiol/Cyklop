@@ -80,6 +80,10 @@ PageStackWindow {
     Connections {
         target: nextbikeModel
         onReady: {
+            if(Utils.gps()) {
+                positionSource.update();
+            }
+
             if(!Utils.gps() || !positionSource.active) {
                 sort();
             } else if(positionSource.isReady || positionSource.isDone) {
@@ -98,7 +102,6 @@ PageStackWindow {
                 id: item1
                 text:  qsTr("Change city")
                 onClicked: {
-                    //Globals.pageStack.clear();
                     Globals.pageStack.push((Qt.resolvedUrl("FirstRunPage.qml")),{},true);
                 }
             }
@@ -106,7 +109,6 @@ PageStackWindow {
                 id: item2
                 text:  qsTr("Settings")
                 onClicked: {
-                    //Globals.pageStack.push((Qt.resolvedUrl("SettingsPage.qml")),{},true);
                     Scripts.openFile("SettingsPage.qml");
                 }
             }

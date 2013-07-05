@@ -1,13 +1,34 @@
-import QtQuick 1.0
+import QtQuick 1.1
 
-import org.maemo.fremantle 1.0
+import com.nokia.symbian 1.1
 
 import "../config.js" as Config
+import "../globals.js" as Globals
 
 Page {
     id: root
 
     orientationLock: PageOrientation.LockPortrait
+
+    tools: bottomBar
+
+    property variant stack: Globals.pageStack == null ? pageStack : Globals.pageStack
+
+    ToolBarLayout {
+        id: bottomBar
+
+        ToolButton {
+            iconSource: "toolbar-back"
+            onClicked: {
+                if(stack.depth>1) {
+                    //myMenu.close();
+                    stack.pop();
+                } else {
+                    Qt.quit()
+                }
+            }
+        }
+    }
 
     Rectangle {
         anchors.fill: parent
@@ -18,16 +39,17 @@ Page {
         id: flick
 
         anchors.left: root.left; anchors.right: root.right
-        anchors.top: topBar.bottom; anchors.bottom: root.bottom
+        anchors.top: root.top; anchors.bottom: root.bottom
 
-        anchors.margins: 20
         flickableDirection: Flickable.VerticalFlick
-        contentHeight: content.height
+        contentHeight: content.height+Config.MARGIN
 
         Column {
             id: content
             spacing: 30
-            anchors.horizontalCenter: parent.horizontalCenter
+            //anchors.horizontalCenter: parent.horizontalCenter
+            anchors.left: parent.left; anchors.right: parent.right
+            anchors.margins: Config.MARGIN
 
             Label {
                 text: "cyklop"
@@ -54,7 +76,7 @@ Page {
                 color: Config.FGCOLOR_BANER
                 anchors.horizontalCenter: parent.horizontalCenter
                 wrapMode: Text.Wrap
-                //horizontalAlignment: Text.AlignJustify
+                horizontalAlignment: Text.AlignJustify
                 width: parent.width
             }
             Label {
@@ -63,7 +85,7 @@ Page {
                 anchors.horizontalCenter: parent.horizontalCenter
             }
             Label {
-                text: "Copyright (C) 2013 Michał Kościesza"
+                text: "<p>Copyrights &copy; 2013 Michał Kościesza</p>"
                 color: Config.FGCOLOR_BANER
                 anchors.horizontalCenter: parent.horizontalCenter
             }
@@ -75,9 +97,9 @@ Page {
         flickableItem: flick
     }
 
-    TopBar {
+    /*TopBar {
         id: topBar
         showImage: false
-    }
+    }*/
 
 }

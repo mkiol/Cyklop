@@ -120,10 +120,10 @@ double NextbikePlaceModel::lng()
 void NextbikePlaceModel::sortS()
 {
     //qDebug() << "sortS()";
-    this->sort(_lat,_lng);
+    this->sort(_lat,_lng,false);
 }
 
-void NextbikePlaceModel::sort(double lat, double lng)
+void NextbikePlaceModel::sort(double lat, double lng, bool delEnabled)
 {
     // set distance
     //qDebug() << "lat: " << lat << " lng: " << lng;
@@ -135,7 +135,7 @@ void NextbikePlaceModel::sort(double lat, double lng)
         QGeoCoordinate coord = QGeoCoordinate(item->lat(), item->lng());
         item->setDistance((int) curCoord.distanceTo(coord));
         //qDebug() << item->name() << " distance: " << item->distance();
-        if(item->distance()>radius) {
+        if(delEnabled && item->distance()>radius) {
             this->removeRow(i);
             --i; --l;
         }

@@ -46,7 +46,7 @@ Page {
         spacing: 10
         visible: true
 
-        header: Item {
+        /*header: Item {
             height: 80
             width: parent.width
 
@@ -58,7 +58,7 @@ Page {
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.horizontalCenter: parent.horizontalCenter
             }
-        }
+        }*/
 
         delegate: ListDelegate {
             titleText: name
@@ -86,6 +86,13 @@ Page {
         flickableItem: listView
     }
 
+    Notification {
+        id: info
+        anchors.bottom: root.bottom
+        anchors.margins: Config.MARGIN
+        text: qsTr("Select your city");
+    }
+
     BusyPane {
         id: busy
         anchors.top: topBar.bottom; anchors.bottom: root.bottom;
@@ -104,10 +111,13 @@ Page {
 
     Connections {
         target: cityModel
-        onBusy: busy.state = "visible"
+        onBusy: {
+            busy.state = "visible"
+        }
         onReady: {
             listView.positionViewAtIndex(0,ListView.Beginning);
             busy.state = "hidden";
+            info.show();
         }
     }
 

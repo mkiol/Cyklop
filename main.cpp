@@ -60,11 +60,15 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
     viewer.setGeometry(QRect(0,0,800,480));
     //viewer.grabZoomKeys(true);
     viewer.setMainQmlFile(QLatin1String("qml/cyklop/maemo/main.qml"));
-#endif //Q_WS_MAEMO_5
-
-#if defined(MEEGO_EDITION_HARMATTAN)
+#elif defined(MEEGO_EDITION_HARMATTAN)
     viewer.setMainQmlFile(QLatin1String("qml/cyklop/meego/main.qml"));
-#endif //MEEGO_EDITION_HARMATTAN
+#elif defined(Q_OS_SYMBIAN)
+    viewer.setMainQmlFile(QLatin1String("qml/cyklop/symbian/main.qml"));
+#else
+    viewer.engine()->addImportPath(QString("/home/mkiol/dev/QtSDK/Desktop/Qt/474/gcc/imports"));
+    viewer.engine()->addPluginPath(QString("/home/mkiol/dev/QtSDK/Desktop/Qt/474/gcc/plugins"));
+    viewer.setMainQmlFile(QLatin1String("qml/cyklop/symbian/main.qml"));
+#endif
 
     viewer.setWindowTitle(QString("Cyklop"));
     viewer.showExpanded();
