@@ -1,3 +1,10 @@
+cyklop (0.2.1-0) unstable; urgency=low
+
+  * GPS fix
+  * Support for Veturilo & BemowoBike
+
+ -- Michal Kosciesza <michal@mkiol.net>  Sat, 06 Jul 2013 13:44:02 +0200
+ 
 cyklop (0.2.0-0) unstable; urgency=low
 
   * Symbian support

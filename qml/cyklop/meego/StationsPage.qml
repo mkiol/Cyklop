@@ -29,6 +29,7 @@ Page {
             id: refreshButton
             iconId: "toolbar-refresh"
             onClicked: {
+                positionSource.reload();
                 nextbikeModel.init();
             }
         }
@@ -104,31 +105,6 @@ Page {
         text: qsTr("GPS is disabled!")
     }
 
-    /*Line {
-        anchors.top: topBar.bottom
-        shadow: false
-        white: true
-    }
-
-    TopBar {
-        id: topBar
-    }*/
-
-    /*ToolIcon {
-        iconId: "toolbar-refresh"
-        anchors.right: topBar.right
-        anchors.verticalCenter: topBar.verticalCenter
-    }*/
-
-    /*ToolButton {
-        iconSource: pressed ? "image://theme/icon-m-toolbar-refresh-white-selected" : "image://theme/icon-m-toolbar-refresh-white"
-        anchors.right: topBar.right
-        anchors.verticalCenter: topBar.verticalCenter
-        onClicked: {
-            nextbikeModel.init();
-        }
-    }*/
-
     function showList() {
         stationsMap.visible = false;
         stationsList.visible = true;
@@ -157,8 +133,15 @@ Page {
             busy.state = "hidden";
             if(nextbikeModel.count()==0) {
                 errorInfo.show();
+                //positionSource.reload();
+
+                if(positionSource.active) {
+                    gpsInfo.text = qsTr("Waiting for GPS...");
+                    gpsInfo.show();
+                }
             }
             if(!positionSource.active || !Utils.gps()) {
+                gpsInfo.text = qsTr("GPS is disabled!");
                 gpsInfo.show();
             }
             stationsMap.init();

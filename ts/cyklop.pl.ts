@@ -16,7 +16,11 @@
     <name>BusyPane</name>
     <message>
         <source>updating...</source>
-        <translation>aktualizacja...</translation>
+        <translation type="obsolete">aktualizacja...</translation>
+    </message>
+    <message>
+        <source>Updating...</source>
+        <translation>Aktualizacja...</translation>
     </message>
 </context>
 <context>
@@ -82,6 +86,10 @@
     <message>
         <source>Enable GPS</source>
         <translation>Włącz GPS</translation>
+    </message>
+    <message>
+        <source>Choose your language:</source>
+        <translation>Wybierz swój język:</translation>
     </message>
 </context>
 <context>

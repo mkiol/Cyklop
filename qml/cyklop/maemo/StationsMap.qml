@@ -28,11 +28,11 @@ Item {
     function refresh() {
         var i;
 
-        for(i=0; i<100; i++) {
+        for(i=0; i<120; i++) {
             landmarks.children[i].visible = false;
         }
 
-        var l = nextbikeModel.count(); if(l>100) l=100;
+        var l = nextbikeModel.count(); if(l>120) l=119;
         for(i=0; i<l; i++) {
             landmarks.children[i].coordinate.latitude = nextbikeModel.get(i).lat();
             landmarks.children[i].coordinate.longitude = nextbikeModel.get(i).lng();
@@ -83,7 +83,7 @@ Item {
         MapGroup {
             id: landmarks
             Repeater {
-                model: 100
+                model: 120
                 MapImage {
                     offset.x: -32
                     offset.y: -64

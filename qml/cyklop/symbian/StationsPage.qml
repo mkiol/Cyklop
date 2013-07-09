@@ -34,6 +34,7 @@ Page {
             anchors.left: backButton.right
             iconSource: "toolbar-refresh"
             onClicked: {
+                positionSource.reload();
                 nextbikeModel.init();
             }
         }

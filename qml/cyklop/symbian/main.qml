@@ -18,7 +18,6 @@ PageStackWindow {
     }
 
     Component.onCompleted: {
-        //console.log("width: "+width + ", height: "+height);
         // setup globals
         Globals.pageStack = pageStack;
         Globals.stationsPage = stationPage;
@@ -42,6 +41,11 @@ PageStackWindow {
         property bool isReady: false
         property bool isDone: false
         signal ready;
+
+        function reload() {
+            positionSource.isReady=false;
+            positionSource.update();
+        }
 
         onPositionChanged: {
             if(isReady) {

@@ -57,12 +57,23 @@ bool NextbikePlaceModel::parse()
 void NextbikePlaceModel::createPlaces()
 {
     QDomNodeList cityList = domElement.elementsByTagName("city");
-    int l = cityList.length(); int uid = _utils->cityUid();
+    int l = cityList.length();
+    int uid = _utils->cityUid(); int uid2 = uid;
+
+    // fix for Veturilo and BemowoBike //
+    if(uid==210) uid2=197;
+    if(uid==197) uid2=210;
+    // --- //
+
     for(int i=0;i<l;++i) {
         QDomElement city = cityList.at(i).toElement();
-        if(city.attribute("uid").toInt() == uid) {
+        if(city.attribute("uid").toInt() == uid ) {
             _lat = city.attribute("lat").toDouble();
             _lng = city.attribute("lng").toDouble();
+            _cityName = city.attribute("name");
+        }
+        if(city.attribute("uid").toInt() == uid ||
+           city.attribute("uid").toInt() == uid2 ) {
             QDomNodeList placeList = city.elementsByTagName("place");
             int ll = placeList.length();
             for(int ii=0;ii<ll;++ii) {
@@ -76,7 +87,6 @@ void NextbikePlaceModel::createPlaces()
                               place.attribute("bike_numbers","")
                               ));
             }
-            _cityName = city.attribute("name");
         }
     }
 

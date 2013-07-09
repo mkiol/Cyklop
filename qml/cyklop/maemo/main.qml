@@ -51,6 +51,11 @@ PageStackWindow {
         property bool isDone: false
         signal ready;
 
+        function reload() {
+            positionSource.isReady=false;
+            positionSource.update();
+        }
+
         onPositionChanged: {
             if(isReady) {
                 ready();

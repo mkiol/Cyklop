@@ -5,7 +5,7 @@
 .pragma library
 
 // General
-var VERSION = "0.2.0"; //version
+var VERSION = "0.2.1"; //version
 
 // UI
 var MARGIN = 20;

@@ -17,6 +17,7 @@ Page {
             id: refreshButton
             iconId: "toolbar-refresh"
             onClicked: {
+                positionSource.reload();
                 nextbikeModel.init();
             }
         }
@@ -130,6 +131,13 @@ Page {
             busy.state = "hidden";
             if(nextbikeModel.count()==0) {
                 errorInfo.show();
+                //positionSource.reload();
+                //nextbikeModel.init();
+
+                if(positionSource.active) {
+                    gpsInfo.text = qsTr("Waiting for GPS...");
+                    gpsInfo.show();
+                }
             }
             if(!positionSource.active || !Utils.gps()) {
                 gpsInfo.text = qsTr("GPS is disabled!");
