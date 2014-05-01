@@ -29,7 +29,6 @@ Page {
             id: refreshButton
             iconId: "toolbar-refresh"
             onClicked: {
-                positionSource.reload();
                 nextbikeModel.init();
             }
         }
@@ -94,6 +93,7 @@ Page {
 
     BusyPane {
         id: busy
+        open: nextbikeModel.busy
         text: qsTr("Updating data...")
         anchors.top: root.top; anchors.bottom: root.bottom;
     }
@@ -118,34 +118,18 @@ Page {
 
     Connections {
         target: nextbikeModel
-        onBusy: {
-            busy.text = qsTr("Updating data...");
-            busy.state = "visible";
-        }
-        onReady: {
-            if(positionSource.active) {
-                gpsInfo.text = qsTr("Waiting for GPS...");
-                gpsInfo.show();
-            }
-            busy.text = qsTr("Finding nearest stations...");
-        }
-        onSorted: {
-            busy.state = "hidden";
-            if(nextbikeModel.count()==0) {
-                errorInfo.show();
-                //positionSource.reload();
-
-                if(positionSource.active) {
-                    gpsInfo.text = qsTr("Waiting for GPS...");
+        onBusyChanged: {
+            if (!nextbikeModel.busy) {
+                if(nextbikeModel.count()==0) {
+                    errorInfo.show();
+                }
+                if(!positionSource.active || !settings.gps) {
                     gpsInfo.show();
                 }
+
+                if (stationsMap.visible)
+                    stationsMap.refresh();
             }
-            if(!positionSource.active || !Utils.gps()) {
-                gpsInfo.text = qsTr("GPS is disabled!");
-                gpsInfo.show();
-            }
-            stationsMap.init();
         }
     }
-
 }

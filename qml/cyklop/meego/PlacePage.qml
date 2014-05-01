@@ -4,7 +4,6 @@ import com.nokia.meego 1.0
 import QtMobility.location 1.2
 
 import "../config.js" as Config
-import "../globals.js" as Globals
 
 Page {
     id: root
@@ -16,7 +15,7 @@ Page {
     property string bikesNumber
     property int bikes
 
-    property variant stack: Globals.pageStack == null ? pageStack : Globals.pageStack
+    property variant stack: pageStack
 
     tools: bottomBar
 
@@ -53,7 +52,6 @@ Page {
 
     SingleMap {
         id: map
-        //opacity: 1
         anchors.top: root.top; anchors.bottom: root.bottom
         anchors.left: root.left; anchors.right: root.right
         center: coordinate

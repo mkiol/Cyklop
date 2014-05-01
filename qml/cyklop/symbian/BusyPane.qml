@@ -8,22 +8,20 @@ Item {
     id: root
 
     property string text: qsTr("Updating...")
-    property bool running: false
+    property bool open: false
 
     anchors.right: parent.right; anchors.left: parent.left
     opacity: 1.0
-    state: "visible"
+    state: open ? "visible" : "hidden"
 
     states: [
         State {
             name: "visible"
             PropertyChanges { target: root; opacity: 1.0 }
-            PropertyChanges { target: root; running: true }
         },
         State {
             name: "hidden"
             PropertyChanges { target: root; opacity: 0.0 }
-            PropertyChanges { target: root; running: false }
         }
     ]
 
@@ -55,7 +53,7 @@ Item {
         spacing: Config.MARGIN/2
 
         BusyIndicator {
-            running: root.running
+            running: root.open
             anchors.verticalCenter: row.verticalCenter
             width: 25; height: 25
         }
@@ -69,40 +67,6 @@ Item {
 
     MouseArea {
         anchors.fill: root
-        enabled: root.state=="visible" ? true : false
+        enabled: root.open
     }
-
-    /*Rectangle {
-        id: label
-        width: row.width + 2*Config.MARGIN
-        anchors.centerIn: root
-        anchors.margins: Config.MARGIN
-        height: row.height + 2*Config.MARGIN
-        border.color: "#aaaaaa"
-        border.width: 1
-        color: Config.BGCOLOR
-        radius: 10
-    }
-
-    Row {
-        id: row
-        anchors.centerIn: label
-        spacing: Config.MARGIN
-
-        BusyIndicator {
-            running: root.running
-            anchors.verticalCenter: row.verticalCenter
-            width: 25; height: 25
-        }
-
-        Label {
-            text: root.text
-            platformInverted: true
-            opacity: 0.8
-            anchors.verticalCenter: row.verticalCenter
-        }
-    }*/
-
-
-
 }

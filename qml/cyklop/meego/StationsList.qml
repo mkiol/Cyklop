@@ -34,7 +34,7 @@ Item {
 
         delegate: ListDelegate {
             titleText: name
-            subtitleText: Utils.gps() ? humanReadableMeterCount(distance)+" | " : ""
+            subtitleText: settings.gps ? humanReadableMeterCount(distance)+" | " : ""
             titleWidth: parent.width-arrow.width
             Image {
                 id: arrow

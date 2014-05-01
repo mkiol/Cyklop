@@ -1,5 +1,4 @@
 import QtQuick 1.1
-
 import com.nokia.symbian 1.1
 
 import "../config.js" as Config
@@ -7,34 +6,19 @@ import "../config.js" as Config
 Item {
     id: root
 
-    property bool running: false
+    property bool open
+
     height: parent.height; width: parent.width
 
-    state: "visible"
+    state: open ? "visible" : "hidden"
+
+    onOpenChanged: {
+        state = open ? "visible" : "hidden";
+    }
 
     Rectangle {
         anchors.fill: parent
         color: Config.BGCOLOR_BANER
-    }
-
-    Connections {
-        target: nextbikeModel
-        onReady: {
-            root.state = "hidden";
-        }
-        onSorted: {
-            root.state = "hidden";
-        }
-    }
-
-    Connections {
-        target: cityModel
-        onReady: {
-            root.state = "hidden";
-        }
-        onBusy: {
-            root.state = "hidden";
-        }
     }
 
     Column {
@@ -45,7 +29,6 @@ Item {
             source: "../icons/cyklop.png"
             anchors.horizontalCenter: parent.horizontalCenter
         }
-
     }
 
     Row {
@@ -56,7 +39,7 @@ Item {
         spacing: Config.MARGIN
 
         BusyIndicator {
-            running: root.running
+            running: root.open
             anchors.verticalCenter: row.verticalCenter
             width: 25
             height: 25
@@ -75,12 +58,11 @@ Item {
             name: "visible"
             PropertyChanges { target: root; y: 0}
             PropertyChanges { target: root; visible: true }
-            PropertyChanges { target: root; running: true }
         },
         State {
             name: "hidden"
             PropertyChanges { target: root; y: -root.height }
-            PropertyChanges { target: root; running: false }
+            PropertyChanges { target: root; visible: false }
         }
     ]
 

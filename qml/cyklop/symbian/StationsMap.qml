@@ -5,30 +5,44 @@ import QtMobility.location 1.2
 Item {
     id: root
 
-    property Coordinate center
-    property bool inited: false
+    property Coordinate currentPosition
     signal viewportChanged(variant from, variant to)
 
     anchors.fill: parent
 
-    function setCenter(coordinate) {
-        intCenter(coordinate)
-    }
-
     function init() {
-        intCenter(appWindow.position);
-        refresh();
+        setCurrentPosition();
+        intCenter(root.currentPosition);
+        showStations();
     }
 
     function refresh() {
-        var i;
+        setCurrentPosition();
+        showStations();
+    }
 
+    function setCurrentPosition() {
+        if (root.currentPosition)
+            root.currentPosition.destroy();
+        root.currentPosition =
+                Qt.createQmlObject('import QtMobility.location 1.2; Coordinate{latitude:' +
+                                   nextbikeModel.lat  + ';longitude:' +
+                                   nextbikeModel.lng + '}',root);
+    }
+
+    function showStations() {
+
+        if (nextbikeModel.busy)
+            return;
+
+        var i;
         for(i=0; i<120; i++) {
             landmarks.children[i].visible = false;
         }
-
-        var l = nextbikeModel.count(); if(l>120) l=119;
+        var l = nextbikeModel.count(); if(l>120) l=120;
+        //console.log("nextbikeModel.count: "+nextbikeModel.count());
         for(i=0; i<l; i++) {
+            //console.log("i: "+i);
             landmarks.children[i].coordinate.latitude = nextbikeModel.get(i).lat();
             landmarks.children[i].coordinate.longitude = nextbikeModel.get(i).lng();
             landmarks.children[i].source = nextbikeModel.get(i).bikes()>=5 ? "../icons/station-green.png" :
@@ -46,6 +60,8 @@ Item {
     }
 
     function intCenter(c) {
+        if (map.center)
+            map.center.destroy();
         map.center = Qt.createQmlObject('import QtMobility.location 1.2; Coordinate{latitude:' + c.latitude  + ';longitude:' + c.longitude + ';}', map, "coord");
     }
 
@@ -69,8 +85,6 @@ Item {
             ]
         }
 
-        center: root.center
-
         onZoomLevelChanged: {
             root.updateViewport()
         }
@@ -90,7 +104,7 @@ Item {
 
         MapImage {
             id: myPositionMarker
-            coordinate: appWindow.position
+            coordinate: positionSource.position.coordinate
             source: "../icons/marker64.png"
             offset.x: -32
             offset.y: -64
@@ -104,6 +118,7 @@ Item {
         contentHeight: 8000
 
         Component.onCompleted: setCenter()
+
         onMovementEnded: {
             setCenter()
             root.updateViewport()
@@ -150,22 +165,11 @@ Item {
             onClicked: map.zoomLevel--
         }
         MapButton {
+            enabled: positionSource.active
+            visible: positionSource.active
             width: 40; height: 40
             source: "../icons/ball30.png"
-            onClicked: root.intCenter(appWindow.position)
+            onClicked: root.intCenter(root.currentPosition);
         }
     }
-
-    /*Connections {
-        target: viewer
-        onVolumeUp: {
-            map.zoomLevel++;
-        }
-    }
-    Connections {
-        target: viewer
-        onVolumeDown: {
-            map.zoomLevel--;
-        }
-    }*/
 }

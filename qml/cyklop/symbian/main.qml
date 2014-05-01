@@ -4,90 +4,63 @@ import com.nokia.symbian 1.1
 import QtMobility.location 1.2
 
 import "../config.js" as Config
-import "../globals.js" as Globals
-import "../scripts.js" as Scripts
 
 PageStackWindow {
     id: appWindow
 
+    property bool started: false
+
     showStatusBar: true
     showToolBar: true
 
-    StationsPage {
-        id: stationPage
-    }
-
     Component.onCompleted: {
-        // setup globals
-        Globals.pageStack = pageStack;
-        Globals.stationsPage = stationPage;
-
-        // init first page
-        if(Utils.isFirstStart()) {
+        if(settings.cityName === "") {
             pageStack.push((Qt.resolvedUrl("FirstRunPage.qml")),{},true);
         } else {
-            pageStack.push(stationPage);
-            nextbikeModel.init();
+            pageStack.push((Qt.resolvedUrl("StationsPage.qml")),{},true);
         }
+        //pageStack.push((Qt.resolvedUrl("FirstRunPage.qml")),{},true);
     }
-
-    property variant position: positionSource.position.coordinate
 
     PositionSource {
         id: positionSource
-        updateInterval: Utils.gpsInterval()
-        active: Utils.gps()
+        property bool ready: false
+        updateInterval: settings.updateInterval
+        active: settings.gps
 
-        property bool isReady: false
-        property bool isDone: false
-        signal ready;
-
-        function reload() {
-            positionSource.isReady=false;
-            positionSource.update();
+        function printableMethod(method) {
+            if (method == PositionSource.SatellitePositioningMethod)
+                return "Satellite";
+            else if (method == PositionSource.NoPositioningMethod)
+                return "Not available"
+            else if (method == PositionSource.NonSatellitePositioningMethod)
+                return "Non-satellite"
+            else if (method == PositionSource.AllPositioningMethods)
+                return "All/multiple"
+            return "source error";
         }
 
         onPositionChanged: {
-            if(isReady) {
-                ready();
-                isReady=false;
-                isDone=true;
+            //console.log("main.qml: positionSource.onPositionChanged");
+
+            /*console.log("positioningMethod: "+printableMethod(positionSource.positioningMethod));
+            console.log("nmeaSource: "+ positionSource.nmeaSource);
+            console.log("updateInterval: "+ positionSource.updateInterval);
+            console.log("active: "+ positionSource.active);
+            console.log("timestamp: "  + positionSource.position.timestamp);
+            console.log("altitudeValid: "  + positionSource.position.altitudeValid);
+            console.log("longitudeValid: "  + positionSource.position.longitudeValid);
+            console.log("latitudeValid: "  + positionSource.position.latitudeValid);
+            console.log("speedValid: "     + positionSource.position.speedValid);*/
+
+            nextbikeModel.lat = positionSource.position.coordinate.latitude;
+            nextbikeModel.lng = positionSource.position.coordinate.longitude;
+            if (settings.cityId!=0 && !cityModel.busy) {
+                nextbikeModel.refresh();
+                ready = true;
             }
         }
-    }
 
-
-    function sort() {
-        if(!Utils.gps() || !positionSource.active) {
-            appWindow.position = Qt.createQmlObject('import QtMobility.location 1.2; Coordinate{latitude:'+nextbikeModel.lat()+';longitude:'+nextbikeModel.lng()+';}',appWindow);
-            nextbikeModel.sortS();
-        } else {
-            nextbikeModel.sort(position.latitude,position.longitude);
-        }
-    }
-
-    Connections {
-        target: positionSource
-        onReady: {
-            sort();
-        }
-    }
-
-    Connections {
-        target: nextbikeModel
-        onReady: {
-            if(Utils.gps()) {
-                positionSource.update();
-            }
-
-            if(!Utils.gps() || !positionSource.active) {
-                sort();
-            } else if(positionSource.isReady || positionSource.isDone) {
-                sort();
-            } else {
-                positionSource.isReady=true;
-            }
-        }
     }
 
     Menu {
@@ -97,21 +70,21 @@ PageStackWindow {
                 id: item1
                 text:  qsTr("Change city")
                 onClicked: {
-                    Globals.pageStack.push((Qt.resolvedUrl("FirstRunPage.qml")),{},true);
+                    pageStack.replace(Qt.resolvedUrl("FirstRunPage.qml"));
                 }
             }
             MenuItem {
                 id: item2
                 text:  qsTr("Settings")
                 onClicked: {
-                    Scripts.openFile("SettingsPage.qml");
+                    pageStack.push(Qt.resolvedUrl("SettingsPage.qml"));
                 }
             }
             MenuItem {
                 id: item3
                 text:  qsTr("About")
                 onClicked: {
-                    Scripts.openFile("AboutPage.qml");
+                    pageStack.push(Qt.resolvedUrl("AboutPage.qml"));
                 }
             }
             MenuItem {
@@ -121,12 +94,19 @@ PageStackWindow {
                     Qt.quit();
                 }
             }
+        }
+    }
 
+    Connections {
+        target: nextbikeModel
+        onBusyChanged: {
+            if (!nextbikeModel.busy)
+                started = true;
         }
     }
 
     SplashPane {
         id: splash
-        state: "visible"
+        open: (cityModel.busy || nextbikeModel.busy) && !started
     }
 }

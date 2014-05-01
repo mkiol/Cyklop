@@ -11,8 +11,14 @@ Page {
     tools: bottomBar
     orientationLock: PageOrientation.LockPortrait
 
+    Component.onCompleted: {
+        showList();
+        nextbikeModel.init();
+    }
+
     ToolBarLayout {
         id: bottomBar
+        enabled: !nextbikeModel.busy
 
         ToolButton {
             id: backButton
@@ -34,7 +40,6 @@ Page {
             anchors.left: backButton.right
             iconSource: "toolbar-refresh"
             onClicked: {
-                positionSource.reload();
                 nextbikeModel.init();
             }
         }
@@ -72,10 +77,6 @@ Page {
 
     }
 
-    Component.onCompleted: {
-        showList();
-    }
-
     StationsList {
         id: stationsList
         anchors.top: root.top; anchors.bottom: root.bottom
@@ -92,6 +93,7 @@ Page {
 
     BusyPane {
         id: busy
+        open: nextbikeModel.busy
         text: qsTr("Updating data...")
         anchors.top: root.top; anchors.bottom: root.bottom;
     }
@@ -119,27 +121,18 @@ Page {
 
     Connections {
         target: nextbikeModel
-        onBusy: {
-            busy.text = qsTr("Updating data...");
-            busy.state = "visible";
-        }
-        onReady: {
-            if(positionSource.active) {
-                gpsInfo.text = qsTr("Waiting for GPS...");
-                gpsInfo.open();
+        onBusyChanged: {
+            if (!nextbikeModel.busy) {
+                if(nextbikeModel.count()==0) {
+                    errorInfo.open();
+                }
+                if(!positionSource.active || !settings.gps) {
+                    gpsInfo.open();
+                }
+
+                if (stationsMap.visible)
+                    stationsMap.refresh();
             }
-            busy.text = qsTr("Finding nearest stations...");
-        }
-        onSorted: {
-            busy.state = "hidden";
-            if(nextbikeModel.count()==0) {
-                errorInfo.open();
-            }
-            if(!positionSource.active || !Utils.gps()) {
-                gpsInfo.open();
-            }
-            stationsMap.init();
         }
     }
-
 }

@@ -9,14 +9,28 @@ NextbikeCityModel::NextbikeCityModel(QObject *parent) :
     _busy = false;
 }
 
+void NextbikeCityModel::setBusy(bool value)
+{
+    if (_busy == value)
+        return;
+    _busy = value;
+    emit busyChanged();
+}
+
+bool NextbikeCityModel::isBusy()
+{
+    return _busy;
+}
+
 void NextbikeCityModel::init()
 {
-    if(_busy) return;
-    _busy = true;
-    emit busy();
+    if(_busy)
+        return;
+    setBusy(true);
 
     int l = rowCount();
-    removeRows(0,l);
+    if (l>0)
+        removeRows(0,l);
     XMLdata = QByteArray();
 
     QUrl url("http://nextbike.net/maps/nextbike-official.xml");
@@ -30,20 +44,13 @@ void NextbikeCityModel::init()
 
     currentReply = manager.get(request);
     connect(currentReply, SIGNAL(readyRead()), this, SLOT(readyRead()));
-    connect(currentReply, SIGNAL(error(QNetworkReply::NetworkError)), this, SLOT(error(QNetworkReply::NetworkError)));
+    connect(currentReply, SIGNAL(error(QNetworkReply::NetworkError)), this, SLOT(networkError(QNetworkReply::NetworkError)));
 }
 
 void NextbikeCityModel::reload()
 {
-    if(_busy) return;
-
-    int l = rowCount();
-    removeRows(0,l);
-    XMLdata = QByteArray();
-    //qDebug() << "reload";
     init();
 }
-
 
 void NextbikeCityModel::readyRead()
 {
@@ -57,7 +64,7 @@ bool NextbikeCityModel::parse()
 {
     QDomDocument doc("mydocument");
     if (!doc.setContent(XMLdata)) {
-        //qDebug() << "XML parsing fails!";
+        qWarning() << "XML parsing fails!";
         return false;
     }
     domElement = doc.documentElement();
@@ -68,6 +75,7 @@ void NextbikeCityModel::createCity()
 {
     QDomNodeList cityList = domElement.elementsByTagName("city");
     int l = cityList.length();
+
     for(int i=0;i<l;++i) {
         QDomElement city = cityList.at(i).toElement();
         appendRow(new NextbikeCityItem(
@@ -79,9 +87,7 @@ void NextbikeCityModel::createCity()
     }
 
     sort();
-
-    _busy = false;
-    emit ready();
+    setBusy(false);
 }
 
 void NextbikeCityModel::finished(QNetworkReply *reply)
@@ -89,17 +95,18 @@ void NextbikeCityModel::finished(QNetworkReply *reply)
     qDebug() << "finished";
 
     if(!parse()) {
-        qWarning("error parsing XML feed");
-        emit quit();
+        qWarning() << "Error parsing XML feed";
+        setBusy(false);
+        emit error();
         return;
     }
     
     createCity();
 }
 
-void NextbikeCityModel::error(QNetworkReply::NetworkError)
+void NextbikeCityModel::networkError(QNetworkReply::NetworkError)
 {
-    qWarning("error retrieving XML feed");
+    qWarning() << "Error retrieving XML feed";
     currentReply->disconnect(this);
     currentReply->deleteLater();
     currentReply = 0;

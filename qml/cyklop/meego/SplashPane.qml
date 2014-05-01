@@ -7,10 +7,15 @@ import "../config.js" as Config
 Item {
     id: root
 
-    property bool running: false
+    property bool open
+
     height: parent.height; width: parent.width
 
-    state: "visible"
+    state: open ? "visible" : "hidden"
+
+    onOpenChanged: {
+        state = open ? "visible" : "hidden";
+    }
 
     Rectangle {
         anchors.fill: parent
@@ -28,26 +33,6 @@ Item {
             onClicked: Qt.quit()
         }
     }*/
-
-    Connections {
-        target: nextbikeModel
-        onReady: {
-            root.state = "hidden";
-        }
-        onSorted: {
-            root.state = "hidden";
-        }
-    }
-
-    Connections {
-        target: cityModel
-        onReady: {
-            root.state = "hidden";
-        }
-        onBusy: {
-            root.state = "hidden";
-        }
-    }
 
     Column {
         anchors.centerIn: parent
@@ -68,7 +53,7 @@ Item {
         spacing: Config.MARGIN
 
         BusyIndicator {
-            running: root.running
+            running: root.open
             anchors.verticalCenter: row.verticalCenter
             platformStyle: BusyIndicatorStyle {
                 size: "small"
@@ -89,13 +74,11 @@ Item {
             name: "visible"
             PropertyChanges { target: root; y: 0}
             PropertyChanges { target: root; visible: true }
-            PropertyChanges { target: root; running: true }
         },
         State {
             name: "hidden"
             PropertyChanges { target: root; y: -root.height }
             //PropertyChanges { target: root; visible: false }
-            PropertyChanges { target: root; running: false }
         }
     ]
 

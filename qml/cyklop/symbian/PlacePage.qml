@@ -4,7 +4,6 @@ import com.nokia.symbian 1.1
 import QtMobility.location 1.2
 
 import "../config.js" as Config
-import "../globals.js" as Globals
 
 Page {
     id: root
@@ -16,7 +15,7 @@ Page {
     property string bikesNumber
     property int bikes
 
-    property variant stack: Globals.pageStack == null ? pageStack : Globals.pageStack
+    property variant stack: pageStack
 
     tools: bottomBar
 

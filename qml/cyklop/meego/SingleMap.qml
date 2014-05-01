@@ -6,6 +6,7 @@ Item {
     id: myMapRoot
 
     property Coordinate center
+    property Coordinate currentPosition
     property int bikes
 
     signal viewportChanged(variant from, variant to)
@@ -24,8 +25,13 @@ Item {
     }
 
     function intCenter(c) {
-        var coord = Qt.createQmlObject('import QtMobility.location 1.2; Coordinate{latitude:' + c.latitude  + ';longitude:' + c.longitude + ';}', map, "coord");
-        map.center = coord;
+        if (myMapRoot.currentPosition)
+            myMapRoot.currentPosition.destroy();
+        myMapRoot.currentPosition =
+                Qt.createQmlObject('import QtMobility.location 1.2; Coordinate{latitude:' +
+                                   c.latitude  + ';longitude:' +
+                                   c.longitude + '}',myMapRoot);
+        map.center = myMapRoot.currentPosition
     }
 
     Map {
@@ -50,7 +56,7 @@ Item {
 
         MapImage {
             id: myPositionMarker
-            coordinate: appWindow.position
+            coordinate: positionSource.position.coordinate
             source: "../icons/marker64.png"
             offset.x: -32
             offset.y: -64
@@ -58,7 +64,7 @@ Item {
 
         MapImage {
             id: station
-            coordinate: center
+            coordinate: myMapRoot.center
             offset.x: -24
             offset.y: -24
             source: myMapRoot.bikes>=5 ? "../icons/station-green.png" :
@@ -120,7 +126,9 @@ Item {
         MapButton {
             width: 50; height: 50
             source: "../icons/ball30.png"
-            onClicked: myMapRoot.intCenter(appWindow.position)
+            onClicked: {
+                myMapRoot.intCenter(myPositionMarker.coordinate);
+            }
         }
     }
 }

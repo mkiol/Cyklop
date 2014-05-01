@@ -3,7 +3,6 @@ import QtQuick 1.1
 import com.nokia.meego 1.0
 
 import "../config.js" as Config
-import "../globals.js" as Globals
 
 Page {
     id: root
@@ -71,11 +70,9 @@ Page {
             }
 
             onClicked: {
-                Utils.saveCity(uid, name);
-                Utils.saveSettings();
-                nextbikeModel.init();
-                Globals.pageStack.clear();
-                Globals.pageStack.replace(Globals.stationsPage);
+                settings.cityName = name;
+                settings.cityId = uid;
+                pageStack.replace(Qt.resolvedUrl("StationsPage.qml"));
             }
         }
         //Component.onCompleted: positionViewAtIndex(0,ListView.Beginning)
@@ -94,6 +91,7 @@ Page {
 
     BusyPane {
         id: busy
+        open: cityModel.busy
         anchors.top: root.top; anchors.bottom: root.bottom;
         text: qsTr("Updating data...");
     }
@@ -110,13 +108,11 @@ Page {
 
     Connections {
         target: cityModel
-        onBusy: {
-            busy.state = "visible"
-        }
-        onReady: {
-            listView.positionViewAtIndex(0,ListView.Beginning);
-            busy.state = "hidden";
-            info.show();
+        onBusyChanged: {
+            if (!cityModel.busy) {
+                listView.positionViewAtIndex(0,ListView.Beginning);
+                info.show();
+            }
         }
     }
 

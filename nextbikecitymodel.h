@@ -52,21 +52,25 @@ private:
 class NextbikeCityModel : public ListModel
 {
     Q_OBJECT
+
+    Q_PROPERTY (bool busy READ isBusy NOTIFY busyChanged)
+
 public:
     explicit NextbikeCityModel(QObject *parent = 0);
     Q_INVOKABLE void init();
     Q_INVOKABLE void reload();
     Q_INVOKABLE void sort(double lat, double lng);
 
+    bool isBusy();
+
 signals:
-    void quit();
-    void busy();
-    void ready();
+    void error();
+    void busyChanged();
 
 public slots:
     void finished(QNetworkReply *reply);
     void readyRead();
-    void error(QNetworkReply::NetworkError);
+    void networkError(QNetworkReply::NetworkError);
 
 private:
     QNetworkAccessManager manager;
@@ -78,8 +82,7 @@ private:
     bool parse();
     void createCity();
     void sort();
-    //bool caseInsensitiveLessThan(ListItem* i1, ListItem* i2);
-    
+    void setBusy(bool value);
 };
 
 #endif // NEXTBIKECITYMODEL_H

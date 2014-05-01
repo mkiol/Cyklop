@@ -1,13 +1,12 @@
 import QtQuick 1.1
 
 import "../config.js" as Config
-import "../globals.js" as Globals
 
 Item {
     id: root
 
     property bool showImage: true
-    property variant stack: Globals.pageStack == null ? pageStack : Globals.pageStack
+    property variant stack: pageStack
 
     height: 70
 

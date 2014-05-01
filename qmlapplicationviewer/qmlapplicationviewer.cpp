@@ -158,8 +158,7 @@ void QmlApplicationViewer::showExpanded()
 #if defined(Q_OS_SYMBIAN) || defined(MEEGO_EDITION_HARMATTAN) || defined(Q_WS_SIMULATOR)
     showFullScreen();
 #elif defined(Q_WS_MAEMO_5)
-    showFullScreen();
-    //showMaximized();
+    showMaximized();
 #else
     show();
 #endif

@@ -5,34 +5,42 @@ import QtMobility.location 1.2
 Item {
     id: root
 
-    property Coordinate center
-    property bool inited: false
+    property Coordinate currentPosition
     signal viewportChanged(variant from, variant to)
 
     anchors.fill: parent
 
-    function setCenter(coordinate) {
-        intCenter(coordinate)
-    }
-
     function init() {
-        /*if(!inited) {
-            intCenter(appWindow.position);
-            //refresh();
-            inited = true;
-        }*/
-        intCenter(appWindow.position);
-        refresh();
+        setCurrentPosition();
+        intCenter(root.currentPosition);
+        showStations();
     }
 
     function refresh() {
-        var i;
+        setCurrentPosition();
+        showStations();
+    }
 
+    function setCurrentPosition() {
+        if (root.currentPosition)
+            root.currentPosition.destroy();
+        root.currentPosition =
+                Qt.createQmlObject('import QtMobility.location 1.2; Coordinate{latitude:' +
+                                   nextbikeModel.lat  + ';longitude:' +
+                                   nextbikeModel.lng + '}',root);
+    }
+
+    function showStations() {
+
+        if (nextbikeModel.busy)
+            return;
+
+        var i;
         for(i=0; i<120; i++) {
             landmarks.children[i].visible = false;
         }
 
-        var l = nextbikeModel.count(); if(l>120) l=119;
+        var l = nextbikeModel.count(); if(l>120) l=120;
         for(i=0; i<l; i++) {
             landmarks.children[i].coordinate.latitude = nextbikeModel.get(i).lat();
             landmarks.children[i].coordinate.longitude = nextbikeModel.get(i).lng();
@@ -51,6 +59,8 @@ Item {
     }
 
     function intCenter(c) {
+        if (map.center)
+            map.center.destroy();
         map.center = Qt.createQmlObject('import QtMobility.location 1.2; Coordinate{latitude:' + c.latitude  + ';longitude:' + c.longitude + ';}', map, "coord");
     }
 
@@ -73,8 +83,6 @@ Item {
                 PluginParameter {name: "mapping.token"; value: "YfeYb5Rx5e9mGaV0EPso-g"}
             ]
         }
-
-        center: root.center
 
         onZoomLevelChanged: {
             root.updateViewport()
@@ -109,6 +117,7 @@ Item {
         contentHeight: 8000
 
         Component.onCompleted: setCenter()
+
         onMovementEnded: {
             setCenter()
             root.updateViewport()
@@ -156,20 +165,7 @@ Item {
         MapButton {
             width: 50; height: 50
             source: "../icons/ball30.png"
-            onClicked: root.intCenter(appWindow.position)
+            onClicked: root.intCenter(root.currentPosition);
         }
     }
-
-    /*Connections {
-        target: viewer
-        onVolumeUp: {
-            map.zoomLevel++;
-        }
-    }
-    Connections {
-        target: viewer
-        onVolumeDown: {
-            map.zoomLevel--;
-        }
-    }*/
 }

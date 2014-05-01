@@ -3,7 +3,6 @@ import QtQuick 1.1
 import com.nokia.symbian 1.1
 
 import "../config.js" as Config
-import "../globals.js" as Globals
 
 Page {
     id: root
@@ -12,7 +11,7 @@ Page {
 
     tools: bottomBar
 
-    property variant stack: Globals.pageStack == null ? pageStack : Globals.pageStack
+    property variant stack: pageStack
 
     ToolBarLayout {
         id: bottomBar
@@ -52,7 +51,7 @@ Page {
             anchors.margins: Config.MARGIN
 
             Label {
-                text: "cyklop"
+                text: APP_NAME
                 anchors.horizontalCenter: parent.horizontalCenter
                 color: Config.FGCOLOR_BANER
                 font.pixelSize: 32
@@ -62,7 +61,7 @@ Page {
                 anchors.horizontalCenter: parent.horizontalCenter
             }
             Label {
-                text: qsTr("Version") + " : " + Config.VERSION
+                text: qsTr("Version: %1").arg(VERSION);
                 anchors.horizontalCenter: parent.horizontalCenter
                 color: Config.FGCOLOR_BANER
             }
@@ -80,12 +79,13 @@ Page {
                 width: parent.width
             }
             Label {
-                text: "http://cyklop.mkiol.net/"
+                text: PAGE
                 color: Config.FGCOLOR_BANER
                 anchors.horizontalCenter: parent.horizontalCenter
             }
             Label {
-                text: "<p>Copyrights &copy; 2013 Michał Kościesza</p>"
+                textFormat: Text.RichText
+                text: "Copyright &copy; 2014 Michał Kościesza"
                 color: Config.FGCOLOR_BANER
                 anchors.horizontalCenter: parent.horizontalCenter
             }

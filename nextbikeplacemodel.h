@@ -1,30 +1,21 @@
 #ifndef NEXTBIKEPLACEMODEL_H
 #define NEXTBIKEPLACEMODEL_H
 
-#include <QAbstractListModel>
-#include <QString>
-#include <QList>
-#include <QNetworkAccessManager>
-#include <QNetworkReply>
-#include <QBuffer>
-#include <QUrl>
-#include <QDebug>
+#include <QObject>
+#include <QVariant>
+#include <QHash>
 #include <QByteArray>
-#include <QDomDocument>
-#include <QDomNode>
-#include <QDomNodeList>
-#include <QModelIndex>
-#include <QFile>
-#include <QDir>
-
+#include <QString>
+#include <QNetworkReply>
+#include <QNetworkAccessManager>
+#include <QDomElement>
+#include <QList>
 #include <QGeoCoordinate>
 
 #include "listmodel.h"
-#include "utils.h"
 
 // Use the QtMobility namespace
 QTM_USE_NAMESPACE
-
 
 class NextbikePlaceItem : public ListItem
 {
@@ -44,7 +35,7 @@ public:
 public:
     NextbikePlaceItem(QObject *parent = 0): ListItem(parent) {}
     explicit NextbikePlaceItem(const QString &name,
-             int uid, double lat,double lng, int bikes, const QString &bikesNumber,
+             int uid, double lat,double lng, int bikes, const QString &bikesNumber, int distance,
                                QObject *parent = 0);
     QVariant data(int role) const;
     QHash<int, QByteArray> roleNames() const;
@@ -72,42 +63,77 @@ private:
 class NextbikePlaceModel : public ListModel
 {
     Q_OBJECT
+
+    Q_PROPERTY (bool busy READ isBusy NOTIFY busyChanged)
+    Q_PROPERTY (QString cityName READ getCityName)
+    Q_PROPERTY (double cityLat READ getCityLat)
+    Q_PROPERTY (double cityLng READ getCityLng)
+    Q_PROPERTY (double lat READ getLat WRITE setLat)
+    Q_PROPERTY (double lng READ getLng WRITE setLng)
+
+    struct Place {
+        int id;
+        QString name;
+        double lat;
+        double lng;
+        int bikes;
+        QString bikesNumbers;
+        int distance;
+    };
+
 public:
-    explicit NextbikePlaceModel(Utils *utils, QObject *parent = 0);
+    static const int radius = 5000;
+
+    explicit NextbikePlaceModel(QObject *parent = 0);
+
     Q_INVOKABLE void init();
-    Q_INVOKABLE void sort(double lat, double lng, bool delEnabled = true);
-    Q_INVOKABLE void sortS();
-    Q_INVOKABLE QString cityName();
-    Q_INVOKABLE double lat();
-    Q_INVOKABLE double lng();
+    Q_INVOKABLE void refresh();
+
+    //Q_INVOKABLE void sort(double lat, double lng, bool delEnabled = true);
+    //Q_INVOKABLE void sortS();
+
+    QString getCityName();
+    double getCityLat();
+    double getCityLng();
+    double getLat();
+    double getLng();
+    void setLat(const double value);
+    void setLng(const double value);
+
     Q_INVOKABLE int count();
     Q_INVOKABLE QObject* get(int i);
 
+    bool isBusy();
+
 signals:
-    void quit();
-    void busy();
-    void ready();
     void sorted();
+    void error();
+    void busyChanged();
 
 public slots:
     void finished(QNetworkReply *reply);
     void readyRead();
-    void error(QNetworkReply::NetworkError);
+    void networkError(QNetworkReply::NetworkError);
 
 private:
     QNetworkAccessManager manager;
     QNetworkReply *currentReply;
     QByteArray XMLdata;
     QDomElement domElement;
-    QString _cityName;
-    bool _busy;
-    Utils* _utils;
-    double _lat;
-    double _lng;
+    QString cityName;
+    bool busy;
+    double cityLat;
+    double cityLng;
+    double lat;
+    double lng;
+    QList<Place> placeList;
 
     bool parse();
     void createPlaces(); 
-    void doSorting();
+    //void doSorting();
+    void setBusy(bool value);
+    //void sortS();
+    void sortPlaceList();
 };
 
 #endif // NEXTBIKEPLACEMODEL_H

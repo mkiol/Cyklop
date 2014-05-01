@@ -65,8 +65,11 @@ void ListModel::handleItemChange()
 {
   ListItem* item = static_cast<ListItem*>(sender());
   QModelIndex index = indexFromItem(item);
-  if(index.isValid())
+
+  if(index.isValid()) {
+    //qDebug() << "ListModel::handleItemChange" << index;
     emit dataChanged(index, index);
+  }
 }
 
 ListItem * ListModel::find(const QString &id) const

@@ -1,24 +1,84 @@
-#include "nextbikeplacemodel.h"
+#include <QModelIndex>
 
-NextbikePlaceModel::NextbikePlaceModel(Utils *utils, QObject *parent) :
+#include "nextbikeplacemodel.h"
+#include "settings.h"
+
+NextbikePlaceModel::NextbikePlaceModel(QObject *parent) :
     ListModel(new NextbikePlaceItem, parent)
 {
     connect(&manager, SIGNAL(finished(QNetworkReply*)),
             this, SLOT(finished(QNetworkReply*)));
     currentReply = 0;
-    _busy = false;
-    _utils = utils;
-    _cityName = "null";
+    busy = false;
+    cityName = "null";
+    cityLat = 0.0;
+    cityLng = 0.0;
+    lat = 0;
+    lng = 0;
+}
+
+void NextbikePlaceModel::setBusy(bool value)
+{
+    if (busy == value)
+        return;
+    busy = value;
+    emit busyChanged();
+}
+
+bool NextbikePlaceModel::isBusy()
+{
+    return busy;
+}
+
+void NextbikePlaceModel::refresh()
+{
+    if(busy)
+        return;
+    setBusy(true);
+
+    QModelIndex firstIndex, lastIndex;
+    int l = rowCount();
+    if (l>0) {
+        firstIndex = indexFromItem(readRow(0));
+        lastIndex = indexFromItem(readRow(rowCount()-1));
+        emit layoutAboutToBeChanged();
+        removeRows(0,l);
+    }
+
+    sortPlaceList();
+
+    QList<Place>::iterator it = placeList.begin();
+    while (it != placeList.end()) {
+        if ((*it).distance<radius)
+            appendRow(new NextbikePlaceItem(
+                          (*it).name,
+                          (*it).id,
+                          (*it).lat,
+                          (*it).lng,
+                          (*it).bikes,
+                          (*it).bikesNumbers,
+                          (*it).distance
+                          ));
+        ++it;
+    }
+
+    if (l>0) {
+        changePersistentIndex(firstIndex, lastIndex);
+        emit layoutChanged();
+    }
+
+    setBusy(false);
 }
 
 void NextbikePlaceModel::init()
 {
-    if(_busy) return;
-    _busy = true;
-    emit busy();
+    if(busy)
+        return;
+    setBusy(true);
 
     int l = rowCount();
-    removeRows(0,l);
+    if (l>0)
+        removeRows(0,l);
     XMLdata = QByteArray();
 
     QUrl url("http://nextbike.net/maps/nextbike-official.xml");
@@ -32,7 +92,7 @@ void NextbikePlaceModel::init()
 
     currentReply = manager.get(request);
     connect(currentReply, SIGNAL(readyRead()), this, SLOT(readyRead()));
-    connect(currentReply, SIGNAL(error(QNetworkReply::NetworkError)), this, SLOT(error(QNetworkReply::NetworkError)));
+    connect(currentReply, SIGNAL(error(QNetworkReply::NetworkError)), this, SLOT(networkError(QNetworkReply::NetworkError)));
 }
 
 void NextbikePlaceModel::readyRead()
@@ -56,9 +116,18 @@ bool NextbikePlaceModel::parse()
 
 void NextbikePlaceModel::createPlaces()
 {
+    placeList.clear();
+
     QDomNodeList cityList = domElement.elementsByTagName("city");
     int l = cityList.length();
-    int uid = _utils->cityUid(); int uid2 = uid;
+
+    if (l==0) {
+        qWarning() << "City not found!";
+        return;
+    }
+
+    Settings *s = Settings::instance();
+    int uid = s->getCityId(); int uid2 = uid;
 
     // fix for Veturilo and BemowoBike //
     if(uid==210) uid2=197;
@@ -68,9 +137,12 @@ void NextbikePlaceModel::createPlaces()
     for(int i=0;i<l;++i) {
         QDomElement city = cityList.at(i).toElement();
         if(city.attribute("uid").toInt() == uid ) {
-            _lat = city.attribute("lat").toDouble();
-            _lng = city.attribute("lng").toDouble();
-            _cityName = city.attribute("name");
+            cityLat = city.attribute("lat").toDouble();
+            cityLng = city.attribute("lng").toDouble();
+            cityName = city.attribute("name");
+            //qDebug() << "New city:" << cityName;
+            //qDebug() << "Lat:" << cityLat;
+            //qDebug() << "Lng:" << cityLng;
         }
         if(city.attribute("uid").toInt() == uid ||
            city.attribute("uid").toInt() == uid2 ) {
@@ -78,85 +150,141 @@ void NextbikePlaceModel::createPlaces()
             int ll = placeList.length();
             for(int ii=0;ii<ll;++ii) {
                 QDomElement place = placeList.at(ii).toElement();
-                appendRow(new NextbikePlaceItem(
-                              place.attribute("name"),
-                              place.attribute("uid").toInt(),
-                              place.attribute("lat").toDouble(),
-                              place.attribute("lng").toDouble(),
-                              place.attribute("bikes")=="5+" ? 5 : place.attribute("bikes").toInt(),
-                              place.attribute("bike_numbers","")
-                              ));
+
+                Place placeItem;
+                placeItem.name = place.attribute("name");
+                placeItem.id = place.attribute("uid").toInt();
+                placeItem.lat = place.attribute("lat").toDouble();
+                placeItem.lng = place.attribute("lng").toDouble();
+                placeItem.bikes = place.attribute("bikes")=="5+" ? 5 : place.attribute("bikes").toInt();
+                placeItem.bikesNumbers = place.attribute("bike_numbers","");
+                placeItem.distance = 0;
+
+                this->placeList.append(placeItem);
             }
         }
     }
 
-    _busy = false;
-    emit ready();
+    sortPlaceList();
+
+    bool doDel = (this->lat!=0 && this->lng!=0 && s->getGps());
+    QList<Place>::iterator it = placeList.begin();
+    while (it != placeList.end()) {
+        if (!doDel || (*it).distance<radius)
+            appendRow(new NextbikePlaceItem(
+                          (*it).name,
+                          (*it).id,
+                          (*it).lat,
+                          (*it).lng,
+                          (*it).bikes,
+                          (*it).bikesNumbers,
+                          (*it).distance
+                          ));
+        ++it;
+    }
+
+    setBusy(false);
 }
 
 void NextbikePlaceModel::finished(QNetworkReply *reply)
 {
     if(!parse()) {
-        qWarning("error parsing XML feed");
-        emit quit();
+        qWarning() << "Error parsing XML feed";
+        emit error();
         return;
     }
     createPlaces();
 }
 
-void NextbikePlaceModel::error(QNetworkReply::NetworkError)
+void NextbikePlaceModel::networkError(QNetworkReply::NetworkError)
 {
-    qWarning("error retrieving XML feed");
+    qWarning() << "Error retrieving XML feed";
     currentReply->disconnect(this);
     currentReply->deleteLater();
-    currentReply = 0;
 }
 
-QString NextbikePlaceModel::cityName()
+QString NextbikePlaceModel::getCityName()
 {
-    return _cityName;
+    return cityName;
 }
 
-double NextbikePlaceModel::lat()
+double NextbikePlaceModel::getLat()
 {
-    return _lat;
+    if (lat==0)
+        return cityLat;
+    return lat;
 }
 
-double NextbikePlaceModel::lng()
+double NextbikePlaceModel::getLng()
 {
-    return _lng;
+    if (lng==0)
+        return cityLng;
+    return lng;
 }
 
-void NextbikePlaceModel::sortS()
+void NextbikePlaceModel::setLat(const double value)
 {
-    //qDebug() << "sortS()";
+    lat = value;
+}
+
+void NextbikePlaceModel::setLng(const double value)
+{
+    lng = value;
+}
+
+
+double NextbikePlaceModel::getCityLat()
+{
+    return cityLat;
+}
+
+double NextbikePlaceModel::getCityLng()
+{
+    return cityLng;
+}
+
+/*void NextbikePlaceModel::sortS()
+{
+    qDebug() << "sortS()";
+
     this->sort(_lat,_lng,false);
 }
 
 void NextbikePlaceModel::sort(double lat, double lng, bool delEnabled)
 {
-    // set distance
-    //qDebug() << "lat: " << lat << " lng: " << lng;
+    qDebug() << "sort()" << delEnabled;
     QGeoCoordinate curCoord = QGeoCoordinate(lat, lng);
-    int radius = _utils->radius();
-    int l = this->rowCount();
+    QList<int> removeList;
+    int l = rowCount();
     for(int i=0; i<l; ++i) {
-        NextbikePlaceItem* item = (NextbikePlaceItem*) this->readRow(i);
+        NextbikePlaceItem* item = static_cast<NextbikePlaceItem*>(readRow(i));
         QGeoCoordinate coord = QGeoCoordinate(item->lat(), item->lng());
         item->setDistance((int) curCoord.distanceTo(coord));
+
+        //item->setDistance(qrand() % ((100 + 1) - 1) + 1);
         //qDebug() << item->name() << " distance: " << item->distance();
+
         if(delEnabled && item->distance()>radius) {
-            this->removeRow(i);
-            --i; --l;
+            removeList.append(i);
         }
     }
 
-    // sort
-    this->doSorting();
-    emit sorted();
-}
+    QList<int>::iterator it = removeList.begin();
+    while (it != removeList.end()) {
+        removeRow(*it);
+        ++it;
+    }
 
-void NextbikePlaceModel::doSorting()
+    QModelIndex firstIndex = indexFromItem(readRow(0));
+    QModelIndex lastIndex = indexFromItem(readRow(rowCount()-1));
+    emit layoutAboutToBeChanged();
+    this->doSorting();
+    changePersistentIndex(firstIndex, lastIndex);
+    emit layoutChanged();
+    emit sorted();
+}*/
+
+/*void NextbikePlaceModel::doSorting()
 {
     int n, i;
     for (n = 0; n < this->rowCount(); ++n) {
@@ -164,6 +292,37 @@ void NextbikePlaceModel::doSorting()
             if(((NextbikePlaceItem*)this->readRow(n))->distance() >
                ((NextbikePlaceItem*)this->readRow(i))->distance()) {
                 this->moveRow(i, n);
+                n = 0;
+            }
+        }
+    }
+}*/
+
+void NextbikePlaceModel::sortPlaceList()
+{
+    //updating distance
+    double lat, lng;
+    if (this->lat !=0 && this->lng !=0) {
+        lat = this->lat;
+        lng = this->lng;
+    } else {
+        lat = this->cityLat;
+        lng = this->cityLng;
+    }
+    QGeoCoordinate curCoord(lat, lng);
+    QList<Place>::iterator it = placeList.begin();
+    while (it != placeList.end()) {
+        QGeoCoordinate coord((*it).lat,(*it).lng);
+        (*it).distance = (int) curCoord.distanceTo(coord);
+        ++it;
+    }
+
+    // sorting
+    int n, i, l = placeList.count();
+    for (n = 0; n < l; ++n) {
+        for (i=n+1; i < l; ++i) {
+            if(placeList.at(n).distance > placeList.at(i).distance) {
+                placeList.move(i, n);
                 n = 0;
             }
         }
@@ -182,10 +341,9 @@ QObject* NextbikePlaceModel::get(int i)
 
 // ----------------------------------------------------------------
 
-NextbikePlaceItem::NextbikePlaceItem(const QString &name, int uid, double lat, double lng, int bikes, const QString &bikesNumber, QObject *parent) :
-    ListItem(parent), m_name(name), m_uid(uid), m_lat(lat), m_lng(lng), m_bikes(bikes), m_bikesNumber(bikesNumber)
+NextbikePlaceItem::NextbikePlaceItem(const QString &name, int uid, double lat, double lng, int bikes, const QString &bikesNumber, int distance, QObject *parent) :
+    ListItem(parent), m_name(name), m_uid(uid), m_lat(lat), m_lng(lng), m_bikes(bikes), m_bikesNumber(bikesNumber), m_distance(distance)
 {
-    m_distance = 0;
 }
 
 QHash<int, QByteArray> NextbikePlaceItem::roleNames() const
@@ -226,5 +384,5 @@ QVariant NextbikePlaceItem::data(int role) const
 void NextbikePlaceItem::setDistance(int distance)
 {
     this->m_distance = distance;
-    this->dataChanged();
+    emit dataChanged();
 }

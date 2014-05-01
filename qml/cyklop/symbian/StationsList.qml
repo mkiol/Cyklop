@@ -32,33 +32,6 @@ Item {
         spacing: 0
         visible: true
 
-        /*delegate: ListDelegate {
-            titleText: name
-            subtitleText: Utils.gps() ? humanReadableMeterCount(distance)+" | " : ""
-            titleWidth: parent.width-arrow.width
-            Image {
-                id: arrow
-                anchors.right: parent.right;
-                anchors.verticalCenter: parent.verticalCenter
-            }
-            onClicked: {
-                root.openPlacePage(name,lat,lng,bikes,bikesNumber);
-            }
-            Component.onCompleted: {
-                arrow.source = bikes>=5 ? "../icons/icon-arrow-green.png" :
-                               bikes<1 ?  "../icons/icon-arrow-red.png" :
-                                          "../icons/icon-arrow-yellow.png";
-                if(bikes>=5)
-                    subtitleText = subtitleText + bikes + " " + qsTr("or more free bikes");
-                else if(bikes>1)
-                    subtitleText = subtitleText + bikes + " " + qsTr("free bikes");
-                else if(bikes>0)
-                    subtitleText = subtitleText + bikes + " " + qsTr("free bike");
-                else
-                    subtitleText = subtitleText + qsTr("no free bikes");
-            }
-        }*/
-
         delegate: ListItem {
             id: listItem
             //subItemIndicator: true
@@ -83,7 +56,7 @@ Item {
                     mode: listItem.mode
                     role: "SubTitle"
                     elide: Text.ElideRight
-                    text: Utils.gps() ? humanReadableMeterCount(distance)+" | " : ""
+                    text: settings.gps ? humanReadableMeterCount(distance)+" | " : ""
                 }
             }
 

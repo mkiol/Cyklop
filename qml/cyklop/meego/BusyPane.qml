@@ -8,22 +8,20 @@ Item {
     id: root
 
     property string text: qsTr("Updating...")
-    property bool running: false
+    property bool open: false
 
     anchors.right: parent.right; anchors.left: parent.left
     opacity: 1.0
-    state: "visible"
+    state: open ? "visible" : "hidden"
 
     states: [
         State {
             name: "visible"
             PropertyChanges { target: root; opacity: 1.0 }
-            PropertyChanges { target: root; running: true }
         },
         State {
             name: "hidden"
             PropertyChanges { target: root; opacity: 0.0 }
-            PropertyChanges { target: root; running: false }
         }
     ]
 
@@ -42,7 +40,7 @@ Item {
 
     MouseArea {
         anchors.fill: box
-        enabled: root.state=="visible" ? true : false
+        enabled: root.open
     }
 
     Rectangle {
@@ -65,7 +63,7 @@ Item {
         spacing: Config.MARGIN
 
         BusyIndicator {
-            running: root.running
+            running: root.open
             platformStyle: BusyIndicatorStyle { size: "small" }
             anchors.verticalCenter: row.verticalCenter
         }
