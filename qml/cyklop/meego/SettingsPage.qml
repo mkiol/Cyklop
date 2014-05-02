@@ -53,7 +53,7 @@ Page {
                 checked: settings.gps
                 anchors.right: parent.right; anchors.verticalCenter: parent.verticalCenter
 
-                onClicked: {
+                onCheckedChanged: {
                     settings.gps = checked;
                 }
             }

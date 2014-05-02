@@ -10,7 +10,7 @@
 
 static const char *APP_NAME = "Cyklop";
 static const char *VERSION = "0.3.0 (beta release)";
-static const char *AUTHOR = "Micha≥ Koúciesza <michal@mkiol.net>";
+static const char *AUTHOR = "Micha≈Ç Ko≈õciesza <michal@mkiol.net>";
 static const char *PAGE = "https://github/mkiol/Cyklop";
 
 Q_DECL_EXPORT int main(int argc, char *argv[])
@@ -45,6 +45,10 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
     viewer.rootContext()->setContextProperty("cityModel", &cityModel);
     viewer.rootContext()->setContextProperty("nextbikeModel", &nextbikeModel);
 
+#ifdef MEEGO_EDITION_HARMATTAN
+    qDebug() << "MEEGO_EDITION_HARMATTAN";
+#endif
+
 #if defined(Q_WS_MAEMO_5)
     qputenv("N900_PORTRAIT_SENSORS", "1");
     viewer.engine()->addImportPath(QString("/opt/qtm12/imports"));
@@ -58,6 +62,7 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
     viewer.setMainQmlFile(QLatin1String("qml/cyklop/symbian/main.qml"));
 #else
     viewer.setMainQmlFile(QLatin1String("qml/cyklop/symbian/main.qml"));
+    //viewer.setMainQmlFile(QLatin1String("qml/cyklop/meego/main.qml"));
 #endif
 
     viewer.setWindowTitle(QString(APP_NAME));

@@ -103,7 +103,7 @@ Item {
 
         MapImage {
             id: myPositionMarker
-            coordinate: appWindow.position
+            coordinate: currentPosition
             source: "../icons/marker64.png"
             offset.x: -32
             offset.y: -64

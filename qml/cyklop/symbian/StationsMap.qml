@@ -104,7 +104,7 @@ Item {
 
         MapImage {
             id: myPositionMarker
-            coordinate: positionSource.position.coordinate
+            coordinate: currentPosition
             source: "../icons/marker64.png"
             offset.x: -32
             offset.y: -64
@@ -165,8 +165,8 @@ Item {
             onClicked: map.zoomLevel--
         }
         MapButton {
-            enabled: positionSource.active
-            visible: positionSource.active
+            //enabled: positionSource.active
+            //visible: positionSource.active
             width: 40; height: 40
             source: "../icons/ball30.png"
             onClicked: root.intCenter(root.currentPosition);

@@ -1,3 +1,7 @@
+contains(MEEGO_EDITION, harmattan) {
+    DEFINES += MEEGO_EDITION_HARMATTAN
+}
+
 folder_01.source = qml/cyklop
 folder_01.target = qml
 DEPLOYMENTFOLDERS = folder_01
@@ -44,6 +48,5 @@ OTHER_FILES += \
     README.md \
     cyklop_harmattan.desktop \
     cyklop80.png
-
 
 

@@ -10,6 +10,11 @@ Page {
     tools: bottomBar
     orientationLock: PageOrientation.LockPortrait
 
+    Component.onCompleted: {
+        showList();
+        nextbikeModel.init();
+    }
+
     ToolBarLayout {
         id: bottomBar
 
@@ -65,10 +70,6 @@ Page {
             onClicked: (myMenu.status == DialogStatus.Closed) ? myMenu.open() : myMenu.close()
         }
 
-    }
-
-    Component.onCompleted: {
-        showList();
     }
 
     StationsList {

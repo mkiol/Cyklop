@@ -24,14 +24,18 @@ Item {
                                               map.size.height + map.anchors.bottomMargin)))
     }
 
-    function intCenter(c) {
+    function intCenter() {
+        setCurrentPosition();
+        map.center = myMapRoot.currentPosition
+    }
+
+    function setCurrentPosition() {
         if (myMapRoot.currentPosition)
             myMapRoot.currentPosition.destroy();
         myMapRoot.currentPosition =
                 Qt.createQmlObject('import QtMobility.location 1.2; Coordinate{latitude:' +
-                                   c.latitude  + ';longitude:' +
-                                   c.longitude + '}',myMapRoot);
-        map.center = myMapRoot.currentPosition
+                                   nextbikeModel.lat  + ';longitude:' +
+                                   nextbikeModel.lng + '}',myMapRoot);
     }
 
     Map {
@@ -57,7 +61,7 @@ Item {
 
         MapImage {
             id: myPositionMarker
-            coordinate: positionSource.position.coordinate
+            coordinate: currentPosition
             source: "../icons/marker64.png"
             offset.x: -32
             offset.y: -64
@@ -126,12 +130,12 @@ Item {
             onClicked: map.zoomLevel--
         }
         MapButton {
-            enabled: positionSource.active
-            visible: positionSource.active
+            //enabled: positionSource.active
+            //visible: positionSource.active
             width: 40; height: 40
             source: "../icons/ball30.png"
             onClicked: {
-                myMapRoot.intCenter(myPositionMarker.coordinate);
+                myMapRoot.intCenter();
             }
         }
     }
