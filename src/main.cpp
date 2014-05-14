@@ -17,7 +17,6 @@
   along with Cyklop.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
 #include <QtGui/QApplication>
 #include <QtDeclarative>
 #include <QDebug>
@@ -46,8 +45,8 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
     //qDebug() << "QTM_VERSION_STR: " << QTM_VERSION_STR;
 
     QTranslator *appTranslator = new QTranslator;
-    //appTranslator->load(":/i18n/cyklop_" + QLocale::system().name() + ".qm");
-    appTranslator->load(":/i18n/cyklop_pl.qm");
+    appTranslator->load(":/i18n/cyklop_" + QLocale::system().name() + ".qm");
+    //appTranslator->load(":/i18n/cyklop_pl.qm");
     app->installTranslator(appTranslator);
 
     Settings *s = Settings::instance();
@@ -71,10 +70,6 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
     viewer.rootContext()->setContextProperty("cityModel", &cityModel);
     viewer.rootContext()->setContextProperty("nextbikeModel", &nextbikeModel);
 
-#ifdef MEEGO_EDITION_HARMATTAN
-    qDebug() << "MEEGO_EDITION_HARMATTAN";
-#endif
-
 #if defined(Q_WS_MAEMO_5)
     qputenv("N900_PORTRAIT_SENSORS", "1");
     viewer.engine()->addImportPath(QString("/opt/qtm12/imports"));
@@ -87,8 +82,8 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
 #elif defined(Q_OS_SYMBIAN)
     viewer.setMainQmlFile(QLatin1String("qml/cyklop/symbian/main.qml"));
 #else
-    //viewer.setMainQmlFile(QLatin1String("qml/cyklop/symbian/main.qml"));
-    viewer.setMainQmlFile(QLatin1String("qml/cyklop/meego/main.qml"));
+    viewer.setMainQmlFile(QLatin1String("qml/cyklop/symbian/main.qml"));
+    //viewer.setMainQmlFile(QLatin1String("qml/cyklop/meego/main.qml"));
 #endif
 
     viewer.setWindowTitle(QString(APP_NAME));

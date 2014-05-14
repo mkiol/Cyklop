@@ -16,7 +16,7 @@ symbian {
     TARGET.CAPABILITY += NetworkServices
     TARGET.CAPABILITY += Location
     DEPLOYMENT.display_name = Cyklop
-    VERSION = 0.3.0
+    VERSION = 0.3.1
     ICON = cyklop.svg
 }
 
@@ -25,16 +25,22 @@ include(qmlapplicationviewer/qmlapplicationviewer.pri)
 qtcAddDeployment()
 
 HEADERS += \
-    nextbikeplacemodel.h \
-    nextbikecitymodel.h \
-    listmodel.h \
-    settings.h
+    src/nextbikeplacemodel.h \
+    src/nextbikecitymodel.h \
+    src/listmodel.h \
+    src/settings.h
 
-SOURCES += main.cpp \
-    nextbikeplacemodel.cpp \
-    nextbikecitymodel.cpp \
-    listmodel.cpp \
-    settings.cpp
+SOURCES += \
+    src/main.cpp \
+    src/nextbikeplacemodel.cpp \
+    src/nextbikecitymodel.cpp \
+    src/listmodel.cpp \
+    src/settings.cpp
+
+TRANSLATIONS = i18n/cyklop_en.ts \
+               i18n/cyklop_pl.ts
+
+CODECFORTR = UTF-8
 
 OTHER_FILES += \
     qtc_packaging/debian_harmattan/rules \
@@ -46,7 +52,12 @@ OTHER_FILES += \
     qtc_packaging/debian_harmattan/changelog \
     cyklop.svg \
     README.md \
+    LICENSE \
     cyklop_harmattan.desktop \
-    cyklop80.png
+    cyklop80.png \
+    i18n_paths.lst \
+    i18n_ts.lst \
+    lupdate.sh
 
-
+RESOURCES += \
+    resources.qrc
