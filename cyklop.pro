@@ -17,7 +17,7 @@ symbian {
     TARGET.CAPABILITY += Location
     DEPLOYMENT.display_name = Cyklop
     VERSION = 0.3.1
-    ICON = cyklop.svg
+    ICON = cyklop_symbian.svg
 }
 
 # Please do not modify the following two lines. Required for deployment.
