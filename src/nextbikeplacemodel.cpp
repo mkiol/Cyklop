@@ -100,7 +100,18 @@ void NextbikePlaceModel::init()
         removeRows(0,l);
     XMLdata = QByteArray();
 
+    Settings *s = Settings::instance();
+    int uid = s->getCityId(); int uid2 = 0;
+    // fix for Veturilo and BemowoBike //
+    if(uid==210) uid2=197;
+    if(uid==197) uid2=210;
+    // --- //
+
     QUrl url("http://nextbike.net/maps/nextbike-official.xml");
+    if (uid!=0 && uid2==0)
+        url.setUrl(QString("http://nextbike.net/maps/nextbike-official.xml?city=%1").arg(uid));
+    if (uid!=0 && uid2!=0)
+        url.setUrl(QString("http://nextbike.net/maps/nextbike-official.xml?city=%1,%2").arg(uid).arg(uid2));
 
     QNetworkRequest request(url);
 
@@ -147,7 +158,6 @@ void NextbikePlaceModel::createPlaces()
 
     Settings *s = Settings::instance();
     int uid = s->getCityId(); int uid2 = uid;
-
     // fix for Veturilo and BemowoBike //
     if(uid==210) uid2=197;
     if(uid==197) uid2=210;

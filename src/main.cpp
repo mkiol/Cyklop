@@ -29,7 +29,7 @@
 #include "settings.h"
 
 static const char *APP_NAME = "Cyklop";
-static const char *VERSION = "0.3.1";
+static const char *VERSION = "0.3.2";
 static const char *AUTHOR = "Michał Kościesza <michal@mkiol.net>";
 static const char *PAGE = "http://cyklop.mkiol.net/";
 
@@ -82,8 +82,8 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
 #elif defined(Q_OS_SYMBIAN)
     viewer.setMainQmlFile(QLatin1String("qml/cyklop/symbian/main.qml"));
 #else
-    viewer.setMainQmlFile(QLatin1String("qml/cyklop/symbian/main.qml"));
-    //viewer.setMainQmlFile(QLatin1String("qml/cyklop/meego/main.qml"));
+    //viewer.setMainQmlFile(QLatin1String("qml/cyklop/symbian/main.qml"));
+    viewer.setMainQmlFile(QLatin1String("qml/cyklop/meego/main.qml"));
 #endif
 
     viewer.setWindowTitle(QString(APP_NAME));
